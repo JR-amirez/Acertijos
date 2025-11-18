@@ -35,7 +35,6 @@
     color: #1a4dbd;
 }
 
-/* Tarjeta de información (popover) */
 .filter-card {
     border-radius: 12px;
     overflow: hidden;
@@ -75,14 +74,12 @@
     color: #666;
 }
 
-/* Contenedor principal del juego */
 .juego-container {
     width: 100%;
     height: 82%;
     padding: 0 16px 16px 16px;
 }
 
-/* Texto “Instrucciones” */
 .instructions {
     color: #1a4dbd;
     font-weight: bold;
@@ -90,7 +87,6 @@
     height: 4%;
 }
 
-/* Barra superior: nº de juego y tiempo */
 .info {
     display: flex;
     justify-content: space-between;
@@ -132,7 +128,6 @@
     color: var(--ion-color-danger) !important;
 }
 
-/* Overlay de instrucciones */
 .ins-overlay {
     position: fixed;
     inset: 0;
@@ -180,7 +175,6 @@
     color: #222;
 }
 
-/* Layout del área de juego */
 .game {
     height: 89%;
 }
@@ -220,16 +214,10 @@
     --background: #f3f6ff;
     border-radius: 25px;
     padding: 10px;
-
-    /* 🎨 Efecto base visual */
     box-shadow: 0 4px 12px rgba(26, 77, 189, 0.08);
     border: 1px solid rgba(26, 78, 189, 0.673);
-
-    /* Estado base de la card: visible y sin desplazamiento */
     opacity: 1;
     transform: translateY(0) scale(1);
-
-    /* Transiciones suaves para cualquier cambio de estilo */
     transition: transform 0.18s ease-out;
     transition: box-shadow 0.18s ease-out;
     transition: border-color 0.18s ease-out;
@@ -309,7 +297,6 @@
     animation: fadeIn 0.5s ease;
 }
 
-/* Fondos según tipo */
 .victory-overlay {
     background: rgba(0, 0, 0, 0.6);
 }
@@ -322,7 +309,6 @@
     background-color: rgba(0, 0, 0, 0.75);
 }
 
-/* Mensajes centrales (cartas) */
 .victory-message,
 .defeat-message,
 .summary-message {
@@ -334,7 +320,6 @@
     z-index: 1001;
 }
 
-/* Tipografía de títulos dentro de overlays */
 .victory-message h2,
 .defeat-message h2,
 .summary-message h2 {
@@ -342,12 +327,10 @@
     margin: 0 0 20px 0;
 }
 
-/* Título de victoria con efecto pulse */
 .victory-message h2 {
     animation: pulse 1s infinite;
 }
 
-/* Texto dentro de overlays */
 .victory-message p,
 .defeat-message p,
 .summary-message p {
@@ -355,7 +338,6 @@
     margin: 8px 0;
 }
 
-/* Resumen final de resultados */
 .resumen-final {
     padding: 0;
 }
@@ -370,7 +352,6 @@
     font-size: 18px;
 }
 
-/* Estilo del badge en el resumen final */
 .summary-message ion-badge {
     font-size: 22px;
     font-weight: bold;
@@ -379,7 +360,6 @@
     border-radius: 25px;
 }
 
-/* Confetti (capa sobre toda la pantalla) */
 .confetti-container {
     position: fixed;
     top: 0;
@@ -387,23 +367,18 @@
     width: 100%;
     height: 100%;
     pointer-events: none;
-    /* No bloquea clics en los botones del overlay */
     z-index: 999;
-    /* Debajo del mensaje (1000/1001) pero encima del juego */
 }
 
-/* Cada pieza de confetti */
 .confetti {
     position: absolute;
     width: 10px;
     height: 10px;
     top: -10px;
-    /* Empieza ligeramente arriba de la pantalla */
     animation: fall linear infinite;
     opacity: 0.8;
 }
 
-/* Animación de aparición general (ya la estás usando en overlays e instrucciones) */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -414,7 +389,6 @@
     }
 }
 
-/* Animación de entrada “rebotando” para los mensajes de victoria / resumen */
 @keyframes bounceIn {
     0% {
         transform: scale(0.3);
@@ -435,7 +409,6 @@
     }
 }
 
-/* Caída del confetti desde arriba hacia abajo girando */
 @keyframes fall {
     0% {
         transform: translateY(0) rotate(0deg);

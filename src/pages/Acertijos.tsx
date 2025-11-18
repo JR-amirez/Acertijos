@@ -22,7 +22,6 @@ import "./Acertijos.css";
 
 type NivelFlujoId = "basico" | "intermedio" | "avanzado";
 
-// IDs de todos los acertijos del juego
 type ProblematicaFlujoId =
   | "basico_bio_1"
   | "basico_bio_2"
@@ -71,27 +70,23 @@ type ProblematicaFlujoId =
   | "avanzado_geo3d_9"
   | "avanzado_geo3d_10";
 
-// ✅ Cada opción de respuesta del acertijo
 interface RespuestaOpcion {
   texto: string;
   esCorrecta: boolean;
-  icono: string; // por ahora solo lo guardamos; luego puedes mapearlo a un IonIcon
+  icono: string;
 }
 
-// ✅ Estructura de cada acertijo
 interface EscenarioFlujo {
   id: ProblematicaFlujoId;
-  titulo: string; // título corto del acertijo (para listados, etc.)
-  acertijo: string; // texto del enunciado
+  titulo: string;
+  acertijo: string;
   respuestas: RespuestaOpcion[];
 }
 
-// ✅ Diccionario por nivel
 type DiccionarioFlujo = Record<NivelFlujoId, EscenarioFlujo[]>;
 
 const diccionarioFlujo: DiccionarioFlujo = {
   basico: [
-    // --------- NIVEL BÁSICO – BIOLOGÍA ----------
     {
       id: "basico_bio_1",
       titulo: "Fotosíntesis en plantas",
@@ -203,8 +198,6 @@ const diccionarioFlujo: DiccionarioFlujo = {
         },
       ],
     },
-
-    // --------- NIVEL BÁSICO – MATEMÁTICAS ----------
     {
       id: "basico_mat_1",
       titulo: "Edad de Ana",
@@ -263,7 +256,6 @@ const diccionarioFlujo: DiccionarioFlujo = {
   ],
 
   intermedio: [
-    // --------- NIVEL INTERMEDIO – ÓRGANOS DEL CUERPO ----------
     {
       id: "intermedio_org_1",
       titulo: "Cerebro",
@@ -353,7 +345,6 @@ const diccionarioFlujo: DiccionarioFlujo = {
       ],
     },
 
-    // --------- NIVEL INTERMEDIO – FIGURAS PLANAS ----------
     {
       id: "intermedio_geo_1",
       titulo: "Cuadrado",
@@ -445,7 +436,6 @@ const diccionarioFlujo: DiccionarioFlujo = {
   ],
 
   avanzado: [
-    // --------- NIVEL AVANZADO – VACUNAS ----------
     {
       id: "avanzado_vac_1",
       titulo: "Triple viral (SRP)",
@@ -580,8 +570,6 @@ const diccionarioFlujo: DiccionarioFlujo = {
         { texto: "Triple viral", esCorrecta: false, icono: "/icons/" },
       ],
     },
-
-    // --------- NIVEL AVANZADO – CUERPOS GEOMÉTRICOS ----------
     {
       id: "avanzado_geo3d_1",
       titulo: "Prisma rectangular",
@@ -697,7 +685,7 @@ const diccionarioFlujo: DiccionarioFlujo = {
 
 type OrdenamientoProps = {
   nivel?: string;
-  problematicas?: ProblematicaFlujoId[]; // IDs que vienen desde el generador
+  problematicas?: ProblematicaFlujoId[];
   steps?: number;
 };
 
@@ -810,7 +798,6 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
     boolean | null
   >(null);
 
-  // Cada vez que cambiamos de juego, restablecemos el estado de completado
   useEffect(() => {
     setJuegoActualCompletado(false);
     setMensajeResultado(null);
@@ -818,15 +805,11 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
     setUltimaRespuestaCorrecta(null);
   }, [indiceJuegoActual]);
 
-  /**
-   * Lógica cuando el usuario selecciona una respuesta.
-   */
   const handleRespuestaSeleccionada = (respuesta: RespuestaOpcion) => {
     if (juegoTerminado || overlayFinJuego.abierto || overlayTiempoAgotado) {
       return;
     }
 
-    // Guardamos la respuesta seleccionada y si es correcta o no
     setRespuestaSeleccionada(respuesta);
     setUltimaRespuestaCorrecta(respuesta.esCorrecta);
 
@@ -845,9 +828,6 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
     }
   };
 
-  /**
-   * Avanza al siguiente juego o, si era el último, muestra el resumen final.
-   */
   const avanzarAlSiguienteJuego = () => {
     const esUltimoJuego = indiceJuegoActual + 1 >= totalJuegos;
 
@@ -877,9 +857,6 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
     setOverlayResumenFinal(false);
   };
 
-  /**
-   * Temporizador.
-   */
   useEffect(() => {
     if (
       juegoTerminado ||
@@ -908,10 +885,6 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
     overlayTiempoAgotado,
   ]);
 
-  /**
-   * Cuando el tiempo llega a 0 y el acertijo no se ha respondido correctamente,
-   * mostramos el overlay de tiempo agotado.
-   */
   useEffect(() => {
     if (tiempoRestante === 0 && !juegoTerminado && !juegoActualCompletado) {
       setOverlayTiempoAgotado(true);
@@ -1046,12 +1019,10 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
           </div>
 
           <div className="game">
-            {/* Tarjeta con el acertijo actual */}
             <div className="acertijo-card">
               <p>{escenarioActual.acertijo}</p>
             </div>
 
-            {/* Un IonCard por cada respuesta del acertijo actual */}
             <div className="respuestas-container">
               {escenarioActual.respuestas.map((respuesta, index) => {
                 const esSeleccionada = respuestaSeleccionada === respuesta;
@@ -1082,7 +1053,6 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
             </div>
           </div>
 
-          {/* Overlay: tiempo agotado */}
           {overlayTiempoAgotado && (
             <div className="defeat-overlay">
               <div className="defeat-message">
@@ -1093,7 +1063,6 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
             </div>
           )}
 
-          {/* Overlay: fin de juego actual */}
           {overlayFinJuego.abierto && (
             <div className="victory-overlay">
               <div className="victory-message">
@@ -1124,7 +1093,6 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
             </div>
           )}
 
-          {/* Overlay: resumen final */}
           {overlayResumenFinal && (
             <div className="summary-overlay">
               <div className="summary-message">
@@ -1182,7 +1150,6 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
             </div>
           )}
 
-          {/* Overlay de instrucciones */}
           {showInstructions && (
             <div className="ins-overlay">
               <div className="ins-card">
