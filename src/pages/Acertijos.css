@@ -1,0 +1,516 @@
+.header-game {
+    height: 18%;
+}
+
+.toolbar-game {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.header-game .toolbar-game span {
+    color: #0000005b;
+    font-size: 13px;
+}
+
+.header-game .toolbar-game .titles {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.header-game .toolbar-game .titles h1 {
+    text-align: center;
+    height: fit-content;
+    margin: 0;
+    font-size: 50px;
+    font-weight: bold;
+    color: #1a4dbd;
+}
+
+.header-game .toolbar-game .titles ion-icon {
+    color: #1a4dbd;
+}
+
+/* Tarjeta de información (popover) */
+.filter-card {
+    border-radius: 12px;
+    overflow: hidden;
+    --background: #ffffff;
+}
+
+.filter-card .section {
+    padding: 16px 20px;
+    color: #000;
+}
+
+.filter-card .section:not(:last-child) {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.filter-card .header-section h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    color: #1a4dbd;
+}
+
+.filter-card .description-section p {
+    margin: 0;
+    text-align: center;
+    line-height: 1.5;
+    color: #424242;
+}
+
+.filter-card .footer-section {
+    text-align: center;
+}
+
+.filter-card .footer-section span {
+    font-size: 13px;
+    color: #666;
+}
+
+/* Contenedor principal del juego */
+.juego-container {
+    width: 100%;
+    height: 82%;
+    padding: 0 16px 16px 16px;
+}
+
+/* Texto “Instrucciones” */
+.instructions {
+    color: #1a4dbd;
+    font-weight: bold;
+    animation: pulse 2s ease infinite;
+    height: 4%;
+}
+
+/* Barra superior: nº de juego y tiempo */
+.info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 7%;
+}
+
+.info .num-words {
+    text-align: center;
+    font-weight: bold;
+}
+
+.info .temporizador {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.info .temporizador .icono-tiempo {
+    font-size: 22px;
+    color: var(--ion-color-primary);
+}
+
+.info .temporizador .tiempo-display {
+    margin: 0;
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--ion-color-primary);
+    font-family: 'Courier New', monospace;
+}
+
+.info .tiempo-critico {
+    animation: parpadeo 1s infinite;
+}
+
+.tiempo-critico .icono-tiempo,
+.tiempo-critico .tiempo-display {
+    color: var(--ion-color-danger) !important;
+}
+
+/* Overlay de instrucciones */
+.ins-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    animation: fadeIn 0.3s ease;
+    padding: 20px;
+}
+
+.ins-card {
+    background: #fff;
+    border-radius: 18px;
+    width: min(520px, 92vw);
+    padding: 24px 22px;
+    text-align: center;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+}
+
+.ins-title {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    gap: 22%;
+    color: #1a4dbd;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.ins-title-pre {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 22%;
+    color: #1a4dbd;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.ins-stats {
+    margin: 10px 0 18px 0;
+    font-size: 18px;
+    color: #222;
+}
+
+/* Layout del área de juego */
+.game {
+    height: 89%;
+}
+
+.acertijo-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 0;
+    gap: 20px;
+}
+
+.acertijo-card h2 {
+    margin: 0 0 4px 0;
+    font-size: 24px;
+    font-weight: bold;
+    color: #1a4dbd;
+}
+
+.acertijo-card p {
+    margin: 0;
+    font-size: 19px;
+    color: #333;
+    text-align: center;
+    font-weight: bold;
+}
+
+.respuestas-container {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.respuesta-card {
+    --background: #f3f6ff;
+    border-radius: 25px;
+    padding: 10px;
+
+    /* 🎨 Efecto base visual */
+    box-shadow: 0 4px 12px rgba(26, 77, 189, 0.08);
+    border: 1px solid rgba(26, 78, 189, 0.673);
+
+    /* Estado base de la card: visible y sin desplazamiento */
+    opacity: 1;
+    transform: translateY(0) scale(1);
+
+    /* Transiciones suaves para cualquier cambio de estilo */
+    transition: transform 0.18s ease-out;
+    transition: box-shadow 0.18s ease-out;
+    transition: border-color 0.18s ease-out;
+    transition: background 0.18s ease-out;
+}
+
+.respuesta-card:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.respuesta-card-entrada {
+    animation: cardEnter 0.45s ease-out;
+}
+
+.respuestas-container .respuesta-card:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.respuestas-container .respuesta-card:nth-child(2) {
+    animation-delay: 0.08s;
+}
+
+.respuestas-container .respuesta-card:nth-child(3) {
+    animation-delay: 0.16s;
+}
+
+.respuesta-card-correcta {
+    border: 2px solid var(--ion-color-success);
+    animation: correctGlow 0.6s ease-out;
+}
+
+.respuesta-card-incorrecta {
+    border: 2px solid var(--ion-color-danger);
+    animation: shake 0.4s ease;
+}
+
+.respuesta-card-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-top: 5px;
+}
+
+.respuesta-card-correcta {
+    border: 2px solid var(--ion-color-success);
+    animation: correctGlow 0.6s ease-out;
+}
+
+.respuesta-card-title h3 {
+    margin: 0;
+    font-weight: bold;
+    color: #1a4dbd;
+}
+
+.respuesta-card-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.respuesta-card-content img {
+    width: 20%;
+    height: 20%;
+}
+
+.victory-overlay,
+.defeat-overlay,
+.summary-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fadeIn 0.5s ease;
+}
+
+/* Fondos según tipo */
+.victory-overlay {
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.defeat-overlay {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.summary-overlay {
+    background-color: rgba(0, 0, 0, 0.75);
+}
+
+/* Mensajes centrales (cartas) */
+.victory-message,
+.defeat-message,
+.summary-message {
+    padding: 40px 60px;
+    border-radius: 20px;
+    text-align: center;
+    color: white;
+    animation: bounceIn 0.8s ease;
+    z-index: 1001;
+}
+
+/* Tipografía de títulos dentro de overlays */
+.victory-message h2,
+.defeat-message h2,
+.summary-message h2 {
+    font-size: 42px;
+    margin: 0 0 20px 0;
+}
+
+/* Título de victoria con efecto pulse */
+.victory-message h2 {
+    animation: pulse 1s infinite;
+}
+
+/* Texto dentro de overlays */
+.victory-message p,
+.defeat-message p,
+.summary-message p {
+    font-size: 20px;
+    margin: 8px 0;
+}
+
+/* Resumen final de resultados */
+.resumen-final {
+    padding: 0;
+}
+
+.resumen-final h3 {
+    margin-bottom: 16px;
+    font-size: 24px;
+}
+
+.resumen-final p {
+    margin: 10px 0;
+    font-size: 18px;
+}
+
+/* Estilo del badge en el resumen final */
+.summary-message ion-badge {
+    font-size: 22px;
+    font-weight: bold;
+    padding: 12px 24px;
+    margin-top: 16px;
+    border-radius: 25px;
+}
+
+/* Confetti (capa sobre toda la pantalla) */
+.confetti-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    /* No bloquea clics en los botones del overlay */
+    z-index: 999;
+    /* Debajo del mensaje (1000/1001) pero encima del juego */
+}
+
+/* Cada pieza de confetti */
+.confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    top: -10px;
+    /* Empieza ligeramente arriba de la pantalla */
+    animation: fall linear infinite;
+    opacity: 0.8;
+}
+
+/* Animación de aparición general (ya la estás usando en overlays e instrucciones) */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Animación de entrada “rebotando” para los mensajes de victoria / resumen */
+@keyframes bounceIn {
+    0% {
+        transform: scale(0.3);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    70% {
+        transform: scale(0.9);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Caída del confetti desde arriba hacia abajo girando */
+@keyframes fall {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+@keyframes cardEnter {
+    0% {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes correctGlow {
+    0% {
+        box-shadow: 0 0 0 rgba(0, 255, 0, 0);
+        transform: scale(1);
+    }
+
+    50% {
+        box-shadow: 0 0 18px rgba(0, 200, 0, 0.7);
+        transform: scale(1.03);
+    }
+
+    100% {
+        box-shadow: 0 0 0 rgba(0, 255, 0, 0);
+        transform: scale(1);
+    }
+}
+
+@keyframes shake {
+    0% {
+        transform: translateX(0);
+    }
+
+    20% {
+        transform: translateX(-6px);
+    }
+
+    40% {
+        transform: translateX(6px);
+    }
+
+    60% {
+        transform: translateX(-4px);
+    }
+
+    80% {
+        transform: translateX(4px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
