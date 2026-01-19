@@ -1,0 +1,47 @@
+{
+  "nivel": "basico",
+  "tiempoLimite": 10,
+  "categoria": "general",
+  "acertijos": [
+    {
+      "id": "b1",
+      "tema": "Funciones Vitales",
+      "pregunta": "No me alimento como tú ni como un animal; con luz, agua y aire fabrico mi pan.",
+      "respuesta": "Fotosíntesis",
+      "opciones": [
+        "Fotosíntesis",
+        "Respiración",
+        "Reproducción"
+      ]
+    },
+    {
+      "id": "b5",
+      "tema": "Funciones Vitales",
+      "pregunta": "Aunque no tengo pies ni ruedas, me muevo sin caminar. Si la luz aparece, hacia ella me verás girar. ¿Qué soy?",
+      "respuesta": "Fototropismo",
+      "opciones": [
+        "Fototropismo",
+        "Hibernación",
+        "Fotosíntesis"
+      ]
+    },
+    {
+      "id": "b9",
+      "tema": "Lógica",
+      "pregunta": "Soy un número de dos cifras. La cifra de las decenas es 3 veces la cifra de las unidades, y la suma de mis cifras es 12. ¿Quién soy?",
+      "respuesta": "93",
+      "opciones": [
+        "39",
+        "84",
+        "93"
+      ]
+    }
+  ],
+  "nombreApp": "asdfas",
+  "version": "1",
+  "descripcion": "",
+  "fecha": "2026-01-18",
+  "plataformas": [
+    "web"
+  ]
+}

@@ -1,24 +1,29 @@
 import React, { useEffect, useState } from "react";
 import {
+  alertCircleOutline,
+  time,
+  closeCircleOutline,
+  refresh,
+  playCircleOutline,
+  informationCircleOutline,
+  pauseCircleOutline,
+  homeOutline,
+  exitOutline,
+} from "ionicons/icons";
+import { Capacitor } from "@capacitor/core";
+import { App as CapacitorApp } from "@capacitor/app";
+import "./Acertijos.css";
+import {
   IonCard,
   IonContent,
   IonIcon,
   IonPage,
   IonPopover,
   IonTitle,
-  IonItem,
   IonButton,
   IonBadge,
-  IonLabel,
-  IonImg,
+  IonChip,
 } from "@ionic/react";
-import {
-  alertCircleOutline,
-  time,
-  closeCircleOutline,
-  refresh,
-} from "ionicons/icons";
-import "./Acertijos.css";
 
 type NivelFlujoId = "basico" | "intermedio" | "avanzado";
 
@@ -691,6 +696,69 @@ type OrdenamientoProps = {
 
 type NivelId = "basico" | "intermedio" | "avanzado";
 
+type AcertijoJSON = {
+  id: string;
+  tema: string;
+  pregunta: string;
+  respuesta: string;
+  opciones: string[];
+};
+
+type AcertijosRuntimeConfig = {
+  autor?: string;
+  version?: string;
+  fecha?: string;
+  descripcion?: string;
+  nombreApp?: string;
+  plataformas?: string[];
+  nivel?: string;
+  tiempoLimite?: number;
+  categoria?: string;
+  acertijos?: AcertijoJSON[];
+  problematicas?: ProblematicaFlujoId[];
+};
+
+const categoriaDesdeId = (id: ProblematicaFlujoId): string => {
+  if (id.includes("_bio_")) return "Biología";
+  if (id.includes("_mat_")) return "Matemáticas";
+  if (id.includes("_org_")) return "Órganos";
+  if (id.includes("_vac_")) return "Vacunas";
+  if (id.includes("_geo3d_")) return "Geometría 3D";
+  if (id.includes("_geo_")) return "Geometría";
+  return "General";
+};
+
+const shuffleArray = <T,>(arr: T[]): T[] => {
+  // Crea una copia para no modificar el arreglo original del escenario
+  const copy = [...arr];
+
+  // Fisher-Yates: garantiza una permutación uniforme
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+
+  return copy;
+};
+
+const transformarAcertijosJSON = (acertijosJSON: AcertijoJSON[]): EscenarioFlujo[] => {
+  return acertijosJSON.map((acertijo) => {
+    // Convertir las opciones en RespuestaOpcion[]
+    const respuestas: RespuestaOpcion[] = acertijo.opciones.map((opcion) => ({
+      texto: opcion,
+      esCorrecta: opcion === acertijo.respuesta,
+      icono: "/icons/"
+    }));
+
+    return {
+      id: acertijo.id as ProblematicaFlujoId,
+      titulo: acertijo.tema,
+      acertijo: acertijo.pregunta,
+      respuestas
+    };
+  });
+};
+
 const Acertijos: React.FC<OrdenamientoProps> = ({
   nivel = "basic",
   problematicas,
@@ -720,29 +788,63 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
     },
   };
 
-  const normalizarNivelConfig = (n: string): NivelId =>
-    ({
+  const normalizarNivelConfig = (n: string): NivelId => {
+    const mapa: Record<string, NivelId> = {
       basico: "basico",
       basic: "basico",
       intermedio: "intermedio",
       intermediate: "intermedio",
       avanzado: "avanzado",
       advanced: "avanzado",
-    }[n] || "basico");
+    };
+    return mapa[n] || "basico";
+  };
 
-  const [appName] = useState("Juego de acertijos STEAM");
-  const [appAutor] = useState("STEAM-G");
-  const [appVersion] = useState("1.0.0");
-  const [appFecha] = useState("16 de Noviembre del 2025");
-  const [appDescripcion] = useState(
+  const obtenerNombreNivel = (nivelKey: NivelId) => {
+    const nombres: Record<NivelId, string> = {
+      basico: "Básico",
+      intermedio: "Intermedio",
+      avanzado: "Avanzado",
+    };
+    return nombres[nivelKey] || nivelKey;
+  };
+
+  const [appName, setAppName] = useState("STEAM-G");
+  const [appAutor, setAppAutor] = useState("STEAM-G");
+  const [appVersion, setAppVersion] = useState("1.0.0");
+  const [appFecha, setAppFecha] = useState("16 de Noviembre del 2025");
+  const [appPlataformas, setAppPlataformas] = useState("Android, iOS y Web");
+  const [appDescripcion, setAppDescripcion] = useState(
     "Lee el acertijo y selecciona la respuesta correcta antes de que termine el tiempo."
   );
+  const [configNivel, setConfigNivel] = useState<string | null>(null);
+  const [configProblematicas, setConfigProblematicas] = useState<
+    ProblematicaFlujoId[] | null
+  >(null);
+  const [configAcertijos, setConfigAcertijos] = useState<EscenarioFlujo[] | null>(null);
+  const [configTiempoLimite, setConfigTiempoLimite] = useState<number | null>(null);
+  const [configCategoria, setConfigCategoria] = useState<string | null>(null);
 
+  // Pantalla de inicio + modal de información (estilo Play)
+  const [mostrarPantallaInicio, setMostrarPantallaInicio] = useState(true);
+  const [showInformation, setShowInformation] = useState(false);
+
+  // Overlay de cuenta regresiva (3..2..1..¡Ahora!)
+  const [showCountdown, setShowCountdown] = useState(false);
+  const [countdown, setCountdown] = useState(3);
+
+  // Pausa (modal tipo Play)
+  const [pausado, setPausado] = useState(false);
+  const [showPauseAlert, setShowPauseAlert] = useState(false);
+
+  // Instrucciones
   const [showInstructions, setShowInstructions] = useState<boolean>(false);
+
   const [indiceJuegoActual, setIndiceJuegoActual] = useState(0);
 
-  const [nivelConfig] = useState<string>(nivel);
-  const nivelConfigKey = normalizarNivelConfig(nivelConfig);
+  // Usa el nivel del JSON config si está disponible, si no usa el prop
+  const nivelAUsar = configNivel !== null ? configNivel : nivel;
+  const nivelConfigKey = normalizarNivelConfig(nivelAUsar);
   const config = configuracionNiveles[nivelConfigKey];
 
   const [tiempoRestante, setTiempoRestante] = useState(() => {
@@ -753,15 +855,16 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
   const [juegosCompletados, setJuegosCompletados] = useState(0);
   const [juegosFallados, setJuegosFallados] = useState(0);
 
-  const [mensajeResultado, setMensajeResultado] = useState<string | null>(null);
   const [juegoActualCompletado, setJuegoActualCompletado] = useState(false);
 
   const [overlayFinJuego, setOverlayFinJuego] = useState<{
     abierto: boolean;
     puntosObtenidos: number;
+    esCorrecta: boolean;
   }>({
     abierto: false,
     puntosObtenidos: 0,
+    esCorrecta: true,
   });
 
   const [overlayTiempoAgotado, setOverlayTiempoAgotado] =
@@ -770,19 +873,74 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
   const [overlayResumenFinal, setOverlayResumenFinal] =
     useState<boolean>(false);
 
+  const [configLoaded, setConfigLoaded] = useState(false);
+
+  useEffect(() => {
+    const cargarConfig = async () => {
+      try {
+        // Ajusta el nombre del archivo si el tuyo se llama diferente
+        const res = await fetch("/config/acertijos-config.json");
+
+        if (!res.ok) {
+          setConfigLoaded(true);
+          return;
+        }
+
+        const data: AcertijosRuntimeConfig = await res.json();
+
+        if (data.nombreApp) setAppName(data.nombreApp);
+        if (data.autor) setAppAutor(data.autor);
+        if (data.version) setAppVersion(data.version);
+        if (data.fecha) setAppFecha(formatearFechaLarga(data.fecha));
+        if (data.descripcion) setAppDescripcion(data.descripcion);
+        if (data.plataformas) setAppPlataformas(data.plataformas.join(", "));
+        if (data.nivel) setConfigNivel(data.nivel);
+        if (data.problematicas) setConfigProblematicas(data.problematicas);
+
+        // Nuevos campos del JSON
+        if (data.tiempoLimite) setConfigTiempoLimite(data.tiempoLimite);
+        if (data.categoria) setConfigCategoria(data.categoria);
+        if (data.acertijos && data.acertijos.length > 0) {
+          const acertijosTransformados = transformarAcertijosJSON(data.acertijos);
+          setConfigAcertijos(acertijosTransformados);
+        }
+      } catch (err) {
+        console.error("No se pudo cargar acertijos-config.json", err);
+      } finally {
+        setConfigLoaded(true);
+      }
+    };
+
+    cargarConfig();
+  }, []);
+
+  // Actualiza el tiempo inicial cuando se carga el tiempo límite del JSON (viene en segundos)
+  useEffect(() => {
+    if (configTiempoLimite !== null && mostrarPantallaInicio) {
+      setTiempoRestante(configTiempoLimite);
+    }
+  }, [configTiempoLimite, mostrarPantallaInicio]);
+
   const escenariosNivelBase = diccionarioFlujo[nivelConfigKey];
 
-  const escenariosSeleccionados: EscenarioFlujo[] =
-    problematicas && problematicas.length > 0
-      ? problematicas
-          .map((id) =>
-            escenariosNivelBase.find((escenario) => escenario.id === id)
-          )
-          .filter((escenario): escenario is EscenarioFlujo => !!escenario)
-      : escenariosNivelBase.slice(
-          0,
-          configuracionNiveles[nivelConfigKey].numeroJuegos
-        );
+  // Prioridad: 1) acertijos del JSON, 2) problemáticas del JSON, 3) prop problematicas, 4) por defecto del nivel
+  const escenariosSeleccionados: EscenarioFlujo[] = (() => {
+    // Si hay acertijos del JSON, usarlos
+    if (configAcertijos && configAcertijos.length > 0) {
+      return configAcertijos;
+    }
+
+    // Si hay problemáticas configuradas (del JSON o del prop)
+    const problematicasAUsar = configProblematicas !== null ? configProblematicas : problematicas;
+    if (problematicasAUsar && problematicasAUsar.length > 0) {
+      return problematicasAUsar
+        .map((id) => escenariosNivelBase.find((escenario) => escenario.id === id))
+        .filter((escenario): escenario is EscenarioFlujo => !!escenario);
+    }
+
+    // Por defecto, usar los primeros del nivel
+    return escenariosNivelBase.slice(0, configuracionNiveles[nivelConfigKey].numeroJuegos);
+  })();
 
   const totalJuegos = escenariosSeleccionados.length || 1;
 
@@ -790,6 +948,53 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
     escenariosSeleccionados[indiceJuegoActual] ||
     escenariosSeleccionados[0] ||
     escenariosNivelBase[0];
+
+  const formatearFechaLarga = (isoDate?: string) => {
+    if (!isoDate) return appFecha;
+
+    const [year, month, day] = isoDate.split("-");
+    const meses = [
+      "enero",
+      "febrero",
+      "marzo",
+      "abril",
+      "mayo",
+      "junio",
+      "julio",
+      "agosto",
+      "septiembre",
+      "octubre",
+      "noviembre",
+      "diciembre",
+    ];
+
+    const mesIndex = Number(month) - 1;
+    if (mesIndex < 0 || mesIndex > 11) return isoDate;
+
+    return `${Number(day)} de ${meses[mesIndex]} del ${year}`;
+  };
+
+  // Categoría: usa la del JSON si está disponible, si no la infiere de los IDs
+  const categoriaConfig = (() => {
+    // Si el JSON tiene categoría configurada, usarla
+    if (configCategoria !== null) {
+      return configCategoria;
+    }
+
+    // Si no, inferirla de los IDs de los escenarios seleccionados
+    const categorias = new Set(
+      (escenariosSeleccionados.length
+        ? escenariosSeleccionados
+        : [escenarioActual]
+      ).map((e) => categoriaDesdeId(e.id))
+    );
+    if (categorias.size === 1) return Array.from(categorias)[0];
+    return "Mixta";
+  })();
+
+  const [respuestasOrdenadas, setRespuestasOrdenadas] = useState<
+    RespuestaOpcion[]
+  >([]);
 
   const [respuestaSeleccionada, setRespuestaSeleccionada] =
     useState<RespuestaOpcion | null>(null);
@@ -800,31 +1005,47 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
 
   useEffect(() => {
     setJuegoActualCompletado(false);
-    setMensajeResultado(null);
     setRespuestaSeleccionada(null);
     setUltimaRespuestaCorrecta(null);
-  }, [indiceJuegoActual]);
+
+    // Cada que cambia el escenario (nuevo juego), aleatorizamos el orden de las respuestas
+    setRespuestasOrdenadas(shuffleArray(escenarioActual.respuestas));
+  }, [indiceJuegoActual, escenarioActual.id]);
 
   const handleRespuestaSeleccionada = (respuesta: RespuestaOpcion) => {
+    // Bloquea selección si el juego ya terminó o si hay overlays activos
     if (juegoTerminado || overlayFinJuego.abierto || overlayTiempoAgotado) {
       return;
     }
 
+    // Guarda selección para pintar la tarjeta (verde/rojo)
     setRespuestaSeleccionada(respuesta);
     setUltimaRespuestaCorrecta(respuesta.esCorrecta);
 
     if (respuesta.esCorrecta) {
+      // ✅ Correcta: suma puntos y cuenta como completada
       const puntosObtenidos = config.puntosPorJuego;
       setPuntuacionTotal((prev) => prev + puntosObtenidos);
       setJuegosCompletados((prev) => prev + 1);
       setJuegoActualCompletado(true);
-      setMensajeResultado("¡Respuesta correcta!");
+
+      // Abre overlay (el useEffect lo cerrará y avanzará)
       setOverlayFinJuego({
         abierto: true,
         puntosObtenidos,
+        esCorrecta: true,
       });
     } else {
-      setMensajeResultado("Respuesta incorrecta, inténtalo de nuevo.");
+      // ❌ Incorrecta: NO suma puntos y pasa al siguiente juego
+      setJuegosFallados((prev) => prev + 1);
+      setJuegoActualCompletado(true);
+
+      // Abre overlay con 0 puntos (el cierre automático avanzará)
+      setOverlayFinJuego({
+        abierto: true,
+        puntosObtenidos: 0,
+        esCorrecta: false,
+      });
     }
   };
 
@@ -838,8 +1059,9 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
     }
 
     setIndiceJuegoActual((prev) => prev + 1);
-    setTiempoRestante(config.tiempoPorJuego * 60);
-    setMensajeResultado(null);
+    // Usa tiempo del JSON (en segundos) si está disponible, si no el del config (en minutos)
+    const tiempoPorJuego = configTiempoLimite !== null ? configTiempoLimite : config.tiempoPorJuego * 60;
+    setTiempoRestante(tiempoPorJuego);
   };
 
   const handleCerrarOverlayFinJuego = () => {
@@ -853,12 +1075,16 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
     avanzarAlSiguienteJuego();
   };
 
-  const handleCerrarOverlayResumenFinal = () => {
-    setOverlayResumenFinal(false);
-  };
-
+  // -------------------------
+  // Timer (se detiene en overlays, pausa y cuenta regresiva)
+  // -------------------------
   useEffect(() => {
     if (
+      mostrarPantallaInicio ||
+      showCountdown ||
+      pausado ||
+      showPauseAlert ||
+      overlayResumenFinal ||
       juegoTerminado ||
       tiempoRestante <= 0 ||
       overlayFinJuego.abierto ||
@@ -879,6 +1105,11 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
 
     return () => clearInterval(intervalId);
   }, [
+    mostrarPantallaInicio,
+    showCountdown,
+    pausado,
+    showPauseAlert,
+    overlayResumenFinal,
     juegoTerminado,
     tiempoRestante,
     overlayFinJuego.abierto,
@@ -911,6 +1142,40 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
     return () => window.clearTimeout(timeoutId);
   }, [overlayTiempoAgotado]);
 
+  // -------------------------
+  // Cuenta regresiva 3..2..1..¡Ahora!
+  // -------------------------
+  useEffect(() => {
+    if (!showCountdown) return;
+
+    setCountdown(3);
+
+    const intervalId = window.setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          window.clearInterval(intervalId);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => window.clearInterval(intervalId);
+  }, [showCountdown]);
+
+  useEffect(() => {
+    if (!showCountdown) return;
+
+    if (countdown === 0) {
+      const t = window.setTimeout(() => {
+        setShowCountdown(false);
+        setCountdown(3);
+      }, 700);
+
+      return () => window.clearTimeout(t);
+    }
+  }, [countdown, showCountdown]);
+
   const formatearTiempo = (segundos: number) => {
     const minutos = Math.floor(segundos / 60);
     const segs = segundos % 60;
@@ -918,21 +1183,105 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
   };
 
   const reiniciarJuego = () => {
-    const primerEscenario = escenariosSeleccionados[0] || escenarioActual;
-
     setJuegoTerminado(false);
+
     setOverlayResumenFinal(false);
     setOverlayTiempoAgotado(false);
-    setOverlayFinJuego({ abierto: false, puntosObtenidos: 0 });
+    setOverlayFinJuego({
+      abierto: false,
+      puntosObtenidos: 0,
+      esCorrecta: true,
+    });
 
     setIndiceJuegoActual(0);
 
-    setTiempoRestante(config.tiempoPorJuego * 60);
+    // Usa tiempo del JSON (en segundos) si está disponible, si no el del config (en minutos)
+    const tiempoPorJuego = configTiempoLimite !== null ? configTiempoLimite : config.tiempoPorJuego * 60;
+    setTiempoRestante(tiempoPorJuego);
     setPuntuacionTotal(0);
     setJuegosCompletados(0);
     setJuegosFallados(0);
-    setMensajeResultado(null);
+
     setJuegoActualCompletado(false);
+    setRespuestaSeleccionada(null);
+    setUltimaRespuestaCorrecta(null);
+
+    // Al reiniciar, también aleatorizamos las respuestas del primer acertijo
+    setRespuestasOrdenadas(
+      shuffleArray((escenariosSeleccionados[0] || escenarioActual).respuestas)
+    );
+
+    setShowInstructions(false);
+  };
+
+  const handleIniciarJuego = () => {
+    reiniciarJuego();
+    setMostrarPantallaInicio(false);
+    setShowCountdown(true);
+  };
+
+  const handleInformation = () => {
+    setShowInformation((prev) => !prev);
+  };
+
+  const handleExitToStart = () => {
+    setShowPauseAlert(false);
+    setPausado(false);
+
+    setShowCountdown(false);
+    setShowInstructions(false);
+    setOverlayFinJuego({
+      abierto: false,
+      puntosObtenidos: 0,
+      esCorrecta: true,
+    });
+    setOverlayTiempoAgotado(false);
+    setOverlayResumenFinal(false);
+
+    setJuegoTerminado(true);
+    setMostrarPantallaInicio(true);
+  };
+
+  const handleCerrarAplicacion = () => {
+    if (Capacitor.isNativePlatform()) {
+      CapacitorApp.exitApp();
+      return;
+    }
+
+    if (typeof window !== "undefined" && window.close) {
+      window.close();
+    }
+  };
+
+  const handlePausar = () => {
+    if (
+      mostrarPantallaInicio ||
+      showCountdown ||
+      overlayResumenFinal ||
+      overlayFinJuego.abierto ||
+      overlayTiempoAgotado ||
+      juegoTerminado ||
+      pausado
+    ) {
+      return;
+    }
+
+    setPausado(true);
+    setShowPauseAlert(true);
+  };
+
+  const handleReanudar = () => {
+    setCountdown(3);
+    setShowCountdown(true);
+    setShowPauseAlert(false);
+    setPausado(false);
+  };
+
+  const handleSalirDesdePausa = () => {
+    setShowPauseAlert(false);
+    setPausado(false);
+    reiniciarJuego();
+    setMostrarPantallaInicio(true);
   };
 
   const generarConfeti = () => {
@@ -956,229 +1305,471 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
 
   return (
     <IonPage>
-      <IonContent>
-        <div className="header-game ion-no-border">
-          <div className="toolbar-game">
-            <div className="titles">
-              <h1>STEAM-G</h1>
-              <IonIcon
-                icon={alertCircleOutline}
-                size="small"
-                id="info-diagrama"
-              />
-              <IonPopover
-                trigger="info-diagrama"
-                side="bottom"
-                alignment="center"
-              >
-                <IonCard className="filter-card ion-no-margin">
-                  <div className="section header-section">
-                    <h2>{appName}</h2>
-                  </div>
-
-                  <div className="section description-section">
-                    <p>{appDescripcion}</p>
-                  </div>
-
-                  <div className="section footer-section">
-                    <span>{appFecha}</span>
-                  </div>
-                </IonCard>
-              </IonPopover>
-            </div>
-            <span>
-              <strong>Autor:</strong> {appAutor} | <strong>Versión:</strong>{" "}
-              {appVersion}
-            </span>
+      {showCountdown && (
+        <div className="countdown-overlay">
+          <div className="countdown-number">
+            {countdown > 0 ? countdown : "¡Ahora!"}
           </div>
         </div>
+      )}
 
-        <div className="juego-container">
-          <IonTitle
-            className="ion-text-center instructions"
-            onClick={() => setShowInstructions(true)}
-          >
-            Instrucciones
-          </IonTitle>
+      {showPauseAlert && (
+        <div className="pause-overlay" onClick={() => {}}>
+          <div className="pause-card" onClick={(e) => e.stopPropagation()}>
+            <h2>Juego en pausa</h2>
+            <p>El tiempo se ha detenido.</p>
 
-          <div className="info">
-            <div className="num-words">
-              <strong>
-                Juego {indiceJuegoActual + 1} de {totalJuegos}
-              </strong>
+            <IonButton
+              expand="block"
+              id="resume"
+              style={{ marginTop: "18px" }}
+              onClick={handleReanudar}
+            >
+              <IonIcon slot="start" icon={playCircleOutline}></IonIcon>
+              Reanudar
+            </IonButton>
+
+            <IonButton
+              expand="block"
+              id="finalize"
+              style={{ marginTop: "10px" }}
+              onClick={handleSalirDesdePausa}
+            >
+              <IonIcon slot="start" icon={homeOutline}></IonIcon>
+              Finalizar juego
+            </IonButton>
+
+            <IonButton
+              expand="block"
+              id="exit"
+              style={{ marginTop: "10px" }}
+              onClick={handleCerrarAplicacion}
+            >
+              <IonIcon slot="start" icon={exitOutline}></IonIcon>
+              Cerrar aplicación
+            </IonButton>
+          </div>
+        </div>
+      )}
+
+      {showInformation && (
+        <div className="info-modal-background" onClick={handleInformation}>
+          <div className="info-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="header">
+              <h2 style={{ color: "var(--color-primary)", fontWeight: "bold" }}>
+                {appName}
+              </h2>
+              <p
+                style={{
+                  color: "#8b8b8bff",
+                  marginTop: "5px",
+                  textAlign: "center",
+                }}
+              >
+                Actividad configurada desde la plataforma Steam-G
+              </p>
             </div>
-            <div className="temporizador">
-              <IonIcon icon={time} className="icono-tiempo" />
-              <h5 className="tiempo-display">
-                {formatearTiempo(tiempoRestante)}
-              </h5>
+
+            <div className="cards-info">
+              <div className="card">
+                <p className="title">VERSIÓN</p>
+                <p className="data">{appVersion}</p>
+              </div>
+
+              <div className="card">
+                <p className="title">FECHA DE CREACIÓN</p>
+                <p className="data">{appFecha}</p>
+              </div>
+
+              <div className="card">
+                <p className="title">PLATAFORMAS</p>
+                <p className="data">{appPlataformas}</p>
+              </div>
+
+              <div className="card">
+                <p className="title">NIVEL</p>
+                <p className="data">{obtenerNombreNivel(nivelConfigKey)}</p>
+              </div>
+
+              <div className="card">
+                <p className="title">CATEGORÍA</p>
+                <p className="data">{categoriaConfig}</p>
+              </div>
+
+              <div className="card description">
+                <p className="title">DESCRIPCIÓN</p>
+                <p className="data">{appDescripcion}</p>
+              </div>
             </div>
-            <div className="num-words">
-              <strong>Puntuación: {puntuacionTotal}</strong>
+
+            <div className="button">
+              <IonButton expand="block" onClick={handleInformation}>
+                Cerrar
+              </IonButton>
             </div>
           </div>
+        </div>
+      )}
 
-          <div className="game">
-            <div className="acertijo-card">
-              <p>{escenarioActual.acertijo}</p>
-            </div>
-
-            <div className="respuestas-container">
-              {escenarioActual.respuestas.map((respuesta, index) => {
-                const esSeleccionada = respuestaSeleccionada === respuesta;
-
-                const clasesAdicionales =
-                  esSeleccionada && ultimaRespuestaCorrecta === true
-                    ? " respuesta-card-correcta"
-                    : esSeleccionada && ultimaRespuestaCorrecta === false
-                    ? " respuesta-card-incorrecta"
-                    : "";
-
-                return (
-                  <IonCard
-                    key={index}
-                    className={"respuesta-card respuesta-card-entrada" + clasesAdicionales}
-                    button
-                    onClick={() => handleRespuestaSeleccionada(respuesta)}
-                  >
-                    <div className="respuesta-card-title">
-                      <h3>{respuesta.texto}</h3>
-                    </div>
-                    <div className="respuesta-card-content">
-                      <img src={respuesta.icono} />
-                    </div>
-                  </IonCard>
-                );
-              })}
-            </div>
-          </div>
-
-          {overlayTiempoAgotado && (
-            <div className="defeat-overlay">
-              <div className="defeat-message">
-                <h2 style={{fontWeight: 'bold'}}>¡Tiempo agotado! ⏰</h2>
-                <p>No lograste responder el acertijo a tiempo.</p>
-                <p>Pasando al siguiente acertijo...</p>
-              </div>
-            </div>
-          )}
-
-          {overlayFinJuego.abierto && (
-            <div className="victory-overlay">
-              <div className="victory-message">
-                <h2 style={{fontWeight: 'bold'}}>¡Muy bien! 🎉</h2>
-                <p>Has respondido correctamente el acertijo.</p>
-                <p>
-                  <strong>
-                    Has ganado +{overlayFinJuego.puntosObtenidos} puntos
-                  </strong>
-                </p>
-                <p>Preparando el siguiente acertijo...</p>
-              </div>
-
-              <div className="confetti-container">
-                {generarConfeti().map((particula) => (
-                  <div
-                    key={particula.id}
-                    className="confetti"
-                    style={{
-                      backgroundColor: particula.color,
-                      left: `${particula.left}%`,
-                      animationDelay: `${particula.delay}s`,
-                      animationDuration: `${particula.duration}s`,
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {overlayResumenFinal && (
-            <div className="summary-overlay">
-              <div className="summary-message">
-                <h2 style={{fontWeight: 'bold'}}>Juego terminado</h2>
-                <div className="resumen-final">
-                  <h3>Resultados finales</h3>
-                  <p>
-                    <strong>Acertijos correctos:</strong>
-                  </p>
-                  <p>
-                    {juegosCompletados} de {totalJuegos}
-                  </p>
-                  <p>
-                    <strong>Acertijos sin resolverz:</strong>
-                  </p>
-                  <p>{juegosFallados}</p>
-                  <p>
-                    <strong>Puntuación total:</strong>
-                  </p>
-                  <p>{puntuacionTotal} puntos</p>
-                  <IonBadge color="primary">
-                    {juegosCompletados === totalJuegos
-                      ? "¡PERFECTO! 🏆"
-                      : juegosCompletados > juegosFallados
-                      ? "¡Buen trabajo! 👍"
-                      : "¡Sigue intentando! 💪"}
-                  </IonBadge>
+      <IonContent fullscreen className="ion-padding">
+        {mostrarPantallaInicio ? (
+          <div className="inicio-container">
+            <div className="header-game ion-no-border">
+              <div className="toolbar-game">
+                <div className="titles start-page">
+                  <h1>{appName}</h1>
                 </div>
-                <IonButton
-                  expand="block"
-                  shape="round"
-                  onClick={reiniciarJuego}
-                  color="light"
-                  style={{ marginTop: "20px" }}
+              </div>
+            </div>
+
+            <div className="info-juego">
+              <div className="info-item">
+                <IonChip>
+                  <strong>Nivel: {obtenerNombreNivel(nivelConfigKey)}</strong>
+                </IonChip>
+              </div>
+
+              {/* <div className="info-item">
+                <IonChip>
+                  <strong>Categoría: {categoriaConfig}</strong>
+                </IonChip>
+              </div> */}
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+              }}
+              className="page-start-btns"
+            >
+              <IonButton onClick={handleIniciarJuego} className="play">
+                <IonIcon slot="start" icon={playCircleOutline}></IonIcon>
+                Iniciar juego
+              </IonButton>
+
+              <IonButton onClick={handleInformation} className="info">
+                <IonIcon slot="start" icon={informationCircleOutline}></IonIcon>
+                Información
+              </IonButton>
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="header-game ion-no-border">
+              <div className="toolbar-game">
+                <div className="titles">
+                  <h1>STEAM-G</h1>
+                  <IonIcon
+                    icon={alertCircleOutline}
+                    size="small"
+                    id="info-diagrama"
+                  />
+                  <IonPopover
+                    trigger="info-diagrama"
+                    side="bottom"
+                    alignment="center"
+                  >
+                    <IonCard className="filter-card ion-no-margin">
+                      <div className="section header-section">
+                        <h2>{appName}</h2>
+                      </div>
+
+                      <div className="section description-section">
+                        <p>{appDescripcion}</p>
+                      </div>
+
+                      <div className="section footer-section">
+                        <span>{appFecha}</span>
+                      </div>
+                    </IonCard>
+                  </IonPopover>
+                </div>
+
+                <span>
+                  <strong>Autor:</strong> {appAutor} | <strong>Versión:</strong>{" "}
+                  {appVersion}
+                </span>
+              </div>
+            </div>
+
+            <div className="juego-container">
+              <IonTitle
+                className="ion-text-center instructions"
+                onClick={() => setShowInstructions(true)}
+              >
+                Instrucciones
+              </IonTitle>
+
+              <div className="info">
+                <div className="num-words">
+                  <strong>
+                    Juego {indiceJuegoActual + 1} de {totalJuegos}
+                  </strong>
+                </div>
+
+                <div
+                  className={
+                    "temporizador " +
+                    (tiempoRestante <= 10 ? "tiempo-critico" : "")
+                  }
                 >
-                  <IonIcon slot="start" icon={refresh} />
-                  Reiniciar juego
+                  <IonIcon icon={time} className="icono-tiempo" />
+                  <h5 className="tiempo-display">
+                    {formatearTiempo(tiempoRestante)}
+                  </h5>
+                </div>
+
+                <div className="num-words">
+                  <strong>Puntuación: {puntuacionTotal}</strong>
+                </div>
+              </div>
+
+              <div className="game">
+                <div className="acertijo-card">
+                  <p>{escenarioActual.acertijo}</p>
+                </div>
+
+                <div className="respuestas-container">
+                  {(respuestasOrdenadas.length
+                    ? respuestasOrdenadas
+                    : escenarioActual.respuestas
+                  ).map((respuesta, index) => {
+                    const esSeleccionada = respuestaSeleccionada === respuesta;
+
+                    const clasesAdicionales =
+                      esSeleccionada && ultimaRespuestaCorrecta === true
+                        ? " respuesta-card-correcta"
+                        : esSeleccionada && ultimaRespuestaCorrecta === false
+                        ? " respuesta-card-incorrecta"
+                        : "";
+
+                    return (
+                      <IonCard
+                        key={`${escenarioActual.id}-${respuesta.texto}-${index}`}
+                        className={
+                          "respuesta-card respuesta-card-entrada" +
+                          clasesAdicionales
+                        }
+                        button
+                        onClick={() => handleRespuestaSeleccionada(respuesta)}
+                      >
+                        <div className="respuesta-card-title">
+                          <h3>{respuesta.texto}</h3>
+                        </div>
+                        <div className="respuesta-card-content">
+                          <img src={respuesta.icono} alt={respuesta.texto} />
+                        </div>
+                      </IonCard>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="button">
+                <IonButton
+                  expand="full"
+                  shape="round"
+                  onClick={handlePausar}
+                  disabled={
+                    pausado ||
+                    showCountdown ||
+                    overlayFinJuego.abierto ||
+                    overlayTiempoAgotado ||
+                    overlayResumenFinal
+                  }
+                >
+                  <IonIcon slot="start" icon={pauseCircleOutline} />
+                  Pausar
                 </IonButton>
               </div>
 
-              <div className="confetti-container">
-                {generarConfeti().map((particula) => (
+              {overlayTiempoAgotado && (
+                <div className="defeat-overlay">
+                  <div className="defeat-message">
+                    <h2 style={{ fontWeight: "bold" }}>¡Tiempo agotado! ⏰</h2>
+                    <p>No lograste responder el acertijo a tiempo.</p>
+                    <p>Pasando al siguiente acertijo...</p>
+                  </div>
+                </div>
+              )}
+
+              {overlayFinJuego.abierto && (
+                <div
+                  className={
+                    overlayFinJuego.esCorrecta
+                      ? "victory-overlay"
+                      : "defeat-overlay"
+                  }
+                >
                   <div
-                    key={particula.id}
-                    className="confetti"
-                    style={{
-                      backgroundColor: particula.color,
-                      left: `${particula.left}%`,
-                      animationDelay: `${particula.delay}s`,
-                      animationDuration: `${particula.duration}s`,
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
+                    className={
+                      overlayFinJuego.esCorrecta
+                        ? "victory-message"
+                        : "defeat-message"
+                    }
+                  >
+                    <h2 style={{ fontWeight: "bold" }}>
+                      {overlayFinJuego.esCorrecta
+                        ? "¡Muy bien! 🎉"
+                        : "¡Ups! ❌"}
+                    </h2>
 
-          {showInstructions && (
-            <div className="ins-overlay">
-              <div className="ins-card">
-                <div className="ins-title">
-                  <h2 style={{ margin: 0, fontWeight: "bold" }}>
-                    Instrucciones
-                  </h2>
-                  <IonIcon
-                    icon={closeCircleOutline}
-                    style={{ fontSize: "26px" }}
-                    onClick={() => setShowInstructions(false)}
-                  />
-                </div>
+                    <p>
+                      {overlayFinJuego.esCorrecta
+                        ? "Has respondido correctamente el acertijo."
+                        : "La respuesta fue incorrecta."}
+                    </p>
 
-                <div className="ins-stats">
-                  <p style={{ textAlign: "justify" }}>
-                    <strong>
-                      Lee con atención el acertijo y pulsa sobre la tarjeta que
-                      consideres correcta. Tienes un tiempo limitado para
-                      elegir. Si aciertas, ganarás puntos y pasarás al siguiente
-                      acertijo. Si el tiempo se agota, se contará como no
-                      resuelto.
-                    </strong>
-                  </p>
+                    <p>
+                      <strong>
+                        Has ganado +
+                        {overlayFinJuego.esCorrecta
+                          ? overlayFinJuego.puntosObtenidos
+                          : 0}{" "}
+                        puntos
+                      </strong>
+                    </p>
+
+                    <p>Preparando el siguiente acertijo...</p>
+                  </div>
+
+                  {overlayFinJuego.esCorrecta && (
+                    <div className="confetti-container">
+                      {generarConfeti().map((particula) => (
+                        <div
+                          key={particula.id}
+                          className="confetti"
+                          style={{
+                            backgroundColor: particula.color,
+                            left: `${particula.left}%`,
+                            animationDelay: `${particula.delay}s`,
+                            animationDuration: `${particula.duration}s`,
+                          }}
+                        />
+                      ))}
+                    </div>
+                  )}
                 </div>
-              </div>
+              )}
+
+              {overlayResumenFinal && (
+                <div className="summary-overlay">
+                  <div className="summary-message">
+                    <h2 style={{ fontWeight: "bold" }}>Juego terminado</h2>
+
+                    <div className="resumen-final">
+                      <h3>Resultados finales</h3>
+
+                      <p>
+                        <strong>Acertijos correctos:</strong>
+                      </p>
+                      <p>
+                        {juegosCompletados} de {totalJuegos}
+                      </p>
+
+                      <p>
+                        <strong>Acertijos sin resolver:</strong>
+                      </p>
+                      <p>{juegosFallados}</p>
+
+                      <p>
+                        <strong>Puntuación total:</strong>
+                      </p>
+                      <p>{puntuacionTotal} puntos</p>
+
+                      <IonBadge className="badge">
+                        {juegosCompletados === totalJuegos
+                          ? "¡PERFECTO! 🏆"
+                          : juegosCompletados > juegosFallados
+                          ? "¡Buen trabajo! 👍"
+                          : "¡Sigue intentando! 💪"}
+                      </IonBadge>
+                    </div>
+
+                    <IonButton
+                      id="finalize"
+                      expand="block"
+                      onClick={handleExitToStart}
+                    >
+                      <IonIcon icon={refresh} slot="start" />
+                      Jugar de Nuevo
+                    </IonButton>
+
+                    <IonButton
+                      id="exit"
+                      expand="block"
+                      onClick={handleCerrarAplicacion}
+                    >
+                      <IonIcon slot="start" icon={exitOutline}></IonIcon>
+                      Cerrar aplicación
+                    </IonButton>
+                  </div>
+
+                  <div className="confetti-container">
+                    {generarConfeti().map((particula) => (
+                      <div
+                        key={particula.id}
+                        className="confetti"
+                        style={{
+                          backgroundColor: particula.color,
+                          left: `${particula.left}%`,
+                          animationDelay: `${particula.delay}s`,
+                          animationDuration: `${particula.duration}s`,
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {showInstructions && (
+                <div
+                  className="ins-overlay"
+                  onClick={() => setShowInstructions(false)}
+                >
+                  <div
+                    className="ins-card"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="ins-title">
+                      <h2
+                        style={{
+                          margin: 0,
+                          fontWeight: "bold",
+                          color: "var(--color-primary)",
+                        }}
+                      >
+                        Instrucciones
+                      </h2>
+                      <IonIcon
+                        icon={closeCircleOutline}
+                        style={{
+                          fontSize: "26px",
+                          color: "var(--color-primary)",
+                        }}
+                        onClick={() => setShowInstructions(false)}
+                      />
+                    </div>
+
+                    <div className="ins-stats">
+                      <p style={{ textAlign: "justify" }}>
+                        <strong>
+                          Lee con atención el acertijo y pulsa sobre la tarjeta
+                          que consideres correcta. Tienes un tiempo limitado
+                          para elegir. Si aciertas, ganarás puntos y pasarás al
+                          siguiente acertijo. Si el tiempo se agota, se contará
+                          como no resuelto.
+                        </strong>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
-        </div>
+          </>
+        )}
       </IonContent>
     </IonPage>
   );

@@ -81,7 +81,7 @@
 }
 
 .instructions {
-    color: #1a4dbd;
+    color: black;
     font-weight: bold;
     animation: pulse 2s ease infinite;
     height: 4%;
@@ -108,14 +108,14 @@
 
 .info .temporizador .icono-tiempo {
     font-size: 22px;
-    color: var(--ion-color-primary);
+    color: var(--dark);
 }
 
 .info .temporizador .tiempo-display {
     margin: 0;
     font-size: 16px;
     font-weight: bold;
-    color: var(--ion-color-primary);
+    color: var(--dark);
     font-family: 'Courier New', monospace;
 }
 
@@ -176,7 +176,7 @@
 }
 
 .game {
-    height: 89%;
+    height: auto;
 }
 
 .acertijo-card {
@@ -192,13 +192,13 @@
     margin: 0 0 4px 0;
     font-size: 24px;
     font-weight: bold;
-    color: #1a4dbd;
+    color: var(--dark);
 }
 
 .acertijo-card p {
     margin: 0;
     font-size: 19px;
-    color: #333;
+    color: var(--dark);
     text-align: center;
     font-weight: bold;
 }
@@ -215,7 +215,7 @@
     border-radius: 25px;
     padding: 10px;
     box-shadow: 0 4px 12px rgba(26, 77, 189, 0.08);
-    border: 1px solid rgba(26, 78, 189, 0.673);
+    border: 1px solid var(--dark);
     opacity: 1;
     transform: translateY(0) scale(1);
     transition: transform 0.18s ease-out;
@@ -271,7 +271,7 @@
 .respuesta-card-title h3 {
     margin: 0;
     font-weight: bold;
-    color: #1a4dbd;
+    color: var(--dark);
 }
 
 .respuesta-card-content {
@@ -486,4 +486,299 @@
     100% {
         transform: translateX(0);
     }
+}
+
+.inicio-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100%;
+}
+
+.header-game {
+    height: 15%;
+}
+
+.toolbar-game {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.header-game .toolbar-game span {
+    color: #0000005b;
+    font-size: 13px;
+}
+
+.header-game .toolbar-game .titles {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.header-game .toolbar-game .titles h1 {
+    text-align: center;
+    height: fit-content;
+    margin: 0;
+    font-size: 50px;
+    font-weight: bold;
+    color: var(--color-primary);
+}
+
+.header-game .toolbar-game .titles.start-page h1 {
+    margin-bottom: 10px;
+    color: #000;
+}
+
+.header-game .toolbar-game .titles ion-icon {
+    color: var(--color-primary);
+}
+
+.info-juego {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 5px;
+    align-items: center;
+    padding: 0;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+}
+
+.info-item ion-chip {
+    margin-bottom: 10px;
+    font-size: 17px;
+    color: #0369a1;
+    background: #e0f2fe;
+}
+
+.page-start-btns {
+    padding-top: 15px;
+}
+
+.page-start-btns .play {
+    font-size: 18px;
+    --padding-top: 10px;
+    --padding-bottom: 10px;
+    --background: var(--color-primary);
+}
+
+.page-start-btns .info {
+    font-size: 18px;
+    --padding-top: 10px;
+    --padding-bottom: 10px;
+    --background: none;
+    --color: var(--color-primary);
+    --border-color: var(--color-primary);
+    --border-style: solid;
+    --border-width: 2px;
+}
+
+ion-icon{
+    --ionicon-stroke-width: 50px;
+}
+
+.info-modal-background {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    animation: infoBackdropIn 200ms ease-out;
+}
+
+.info-modal-background .info-modal {
+    width: min(520px, 85vw);
+    max-height: 85vh;
+    overflow: auto;
+    background: #fff;
+    border: 1px solid;
+    border-radius: 25px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.25);
+    will-change: transform, opacity;
+    animation: infoModalIn 260ms cubic-bezier(.2, .8, .2, 1);
+}
+
+.info-modal .header {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid #7a7a7a49;
+}
+
+.info-modal .cards-info {
+    width: 100%;
+    height: auto;
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    grid-template-rows: repeat(5, auto);
+    gap: 12px;
+    align-items: stretch;
+}
+
+.cards-info .card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 5px;
+    padding: 15px;
+}
+
+.cards-info .card .title {
+    color: #64748b;
+    margin: 0;
+    font-size: 12px;
+    margin-bottom: 6px;
+}
+
+.cards-info .card .data {
+    color: #334155;
+    margin: 0;
+    font-size: 15px;
+}
+
+.cards-info .card.description {
+    margin-top: 10px;
+    background: none;
+    border: none;
+    padding: 0;
+    text-align: justify;
+    line-height: 21px;
+}
+
+.info-modal .button {
+    width: 100%;
+    padding: 0;
+}
+
+.info-modal .button ion-button {
+    --background: var(--color-primary);
+    margin: 0;
+    padding: 0;
+}
+
+.countdown-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    animation: fadeIn 0.3s ease;
+}
+
+.countdown-number {
+    font-size: 100px;
+    font-weight: bold;
+    color: #fff;
+    /* text-shadow: 0 0 20px rgba(26, 77, 189, 0.8); */
+    animation: countdownPulse 1s ease infinite;
+}
+
+@keyframes countdownPulse {
+    0% {
+        transform: scale(0.8);
+        opacity: 0.5;
+    }
+
+    50% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+}
+
+.button {
+    margin-top: 5px;
+    padding: 5px;
+    display: flex;
+    justify-content: center;
+}
+
+.button ion-button {
+    --background: var(--color-primary);
+    --padding-top: 15px;
+    --padding-bottom: 15px;
+    font-weight: bold;
+    width: 100%;
+}
+
+.pause-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 10000;
+}
+
+.pause-card {
+    width: min(92vw, 340px);
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.pause-card h2 {
+    margin: 0 0 8px 0;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--color-primary);
+}
+
+.pause-card p {
+    margin: 0;
+    font-size: 14px;
+    color: #666;
+}
+
+.pause-card ion-button#resume,
+.pause-card ion-button#finalize,
+.summary-overlay .summary-message ion-button#finalize {
+    --background: var(--color-primary)
+}
+
+.pause-card ion-button#exit,
+.summary-overlay .summary-message ion-button#exit {
+    --background: #fff;
+    color: var(--color-primary);
+    --border-color: var(--color-primary);
+    --border-style: solid;
+    --border-width: 1px;
+    font-weight: bold;
+}
+
+.summary-message ion-badge {
+    font-size: 18px;
+    padding: 11px 20px;
+    margin: 20px 0;
+    --background: var(--color-primary);
 }
