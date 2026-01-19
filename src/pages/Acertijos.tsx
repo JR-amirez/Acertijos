@@ -9,6 +9,7 @@ import {
   pauseCircleOutline,
   homeOutline,
   exitOutline,
+  helpCircleOutline,
 } from "ionicons/icons";
 import { Capacitor } from "@capacitor/core";
 import { App as CapacitorApp } from "@capacitor/app";
@@ -78,7 +79,6 @@ type ProblematicaFlujoId =
 interface RespuestaOpcion {
   texto: string;
   esCorrecta: boolean;
-  icono: string;
 }
 
 interface EscenarioFlujo {
@@ -101,17 +101,14 @@ const diccionarioFlujo: DiccionarioFlujo = {
         {
           texto: "Fotosíntesis",
           esCorrecta: true,
-          icono: "/icons/fotosintesis.png",
         },
         {
           texto: "Respiración",
           esCorrecta: false,
-          icono: "/icons/respiracion.png",
         },
         {
           texto: "Reproducción",
           esCorrecta: false,
-          icono: "/icons/reproduccion.png",
         },
       ],
     },
@@ -124,17 +121,14 @@ const diccionarioFlujo: DiccionarioFlujo = {
         {
           texto: "Digestión",
           esCorrecta: false,
-          icono: "/icons/digestion.png",
         },
         {
           texto: "Respiración",
           esCorrecta: true,
-          icono: "/icons/respiracion.png",
         },
         {
           texto: "Excreción",
           esCorrecta: false,
-          icono: "/icons/excrecion.png",
         },
       ],
     },
@@ -144,16 +138,14 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "No necesito pedir comida ni pedir comida para llevar. Yo mismo me la preparo, ¿cómo me puedo llamar?",
       respuestas: [
-        { texto: "Autótrofo", esCorrecta: true, icono: "/icons/autotrofo.png" },
+        { texto: "Autótrofo", esCorrecta: true },
         {
           texto: "Heterótrofo",
           esCorrecta: false,
-          icono: "/icons/heterotrofo.png",
         },
         {
           texto: "Trofólogo",
           esCorrecta: false,
-          icono: "/icons/trofologo.png",
         },
       ],
     },
@@ -166,17 +158,14 @@ const diccionarioFlujo: DiccionarioFlujo = {
         {
           texto: "Nutrición",
           esCorrecta: false,
-          icono: "/icons/nutricion.png",
         },
         {
           texto: "Reproducción",
           esCorrecta: true,
-          icono: "/icons/reproduccion.png",
         },
         {
           texto: "Deporte vegetal",
           esCorrecta: false,
-          icono: "/icons/deporte_vegetal.png",
         },
       ],
     },
@@ -189,17 +178,14 @@ const diccionarioFlujo: DiccionarioFlujo = {
         {
           texto: "Fototropismo",
           esCorrecta: true,
-          icono: "/icons/fototropismo.png",
         },
         {
           texto: "Hibernación",
           esCorrecta: false,
-          icono: "/icons/hibernacion.png",
         },
         {
           texto: "Fotosíntesis",
           esCorrecta: false,
-          icono: "/icons/fotosintesis.png",
         },
       ],
     },
@@ -209,9 +195,9 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "Ana tiene el doble de años que Luis. Si entre los dos suman 18 años, ¿cuántos años tiene Ana?",
       respuestas: [
-        { texto: "6", esCorrecta: false, icono: "/icons/" },
-        { texto: "12", esCorrecta: true, icono: "/icons/" },
-        { texto: "9", esCorrecta: false, icono: "/icons/" },
+        { texto: "6", esCorrecta: false, },
+        { texto: "12", esCorrecta: true, },
+        { texto: "9", esCorrecta: false, },
       ],
     },
     {
@@ -220,9 +206,9 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "Tenías 3/4 de una pizza. Te comes la mitad de lo que tenías. ¿Qué fracción de la pizza comiste?",
       respuestas: [
-        { texto: "3/8", esCorrecta: true, icono: "/icons/" },
-        { texto: "1/4", esCorrecta: false, icono: "/icons/" },
-        { texto: "1/2", esCorrecta: false, icono: "/icons/" },
+        { texto: "3/8", esCorrecta: true, },
+        { texto: "1/4", esCorrecta: false, },
+        { texto: "1/2", esCorrecta: false, },
       ],
     },
     {
@@ -231,9 +217,9 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "A, B y C tienen canicas. A tiene el doble que B, y C tiene 5 menos que A. Si entre los tres suman 30 canicas, ¿cuántas tiene B?",
       respuestas: [
-        { texto: "5", esCorrecta: false, icono: "/icons/" },
-        { texto: "7", esCorrecta: true, icono: "/icons/" },
-        { texto: "10", esCorrecta: false, icono: "/icons/" },
+        { texto: "5", esCorrecta: false, },
+        { texto: "7", esCorrecta: true, },
+        { texto: "10", esCorrecta: false, },
       ],
     },
     {
@@ -242,9 +228,9 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "Soy un número de dos cifras. La cifra de las decenas es 3 veces la cifra de las unidades, y la suma de mis cifras es 12. ¿Quién soy?",
       respuestas: [
-        { texto: "39", esCorrecta: false, icono: "/icons/" },
-        { texto: "84", esCorrecta: false, icono: "/icons/" },
-        { texto: "93", esCorrecta: true, icono: "/icons/" },
+        { texto: "39", esCorrecta: false, },
+        { texto: "84", esCorrecta: false, },
+        { texto: "93", esCorrecta: true, },
       ],
     },
     {
@@ -253,9 +239,9 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "¿Cuál es el número más pequeño mayor que 100 que es divisible tanto por 5 como por 7?",
       respuestas: [
-        { texto: "105", esCorrecta: true, icono: "/icons/" },
-        { texto: "110", esCorrecta: false, icono: "/icons/" },
-        { texto: "140", esCorrecta: false, icono: "/icons/" },
+        { texto: "105", esCorrecta: true, },
+        { texto: "110", esCorrecta: false, },
+        { texto: "140", esCorrecta: false, },
       ],
     },
   ],
@@ -267,9 +253,9 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "Sin mí no puedes pensar, soñar ni recordar. Coordino lo que haces sin descansar. ¿Quién soy?",
       respuestas: [
-        { texto: "Corazón", esCorrecta: false, icono: "/icons/" },
-        { texto: "Cerebro", esCorrecta: true, icono: "/icons/" },
-        { texto: "Estómago", esCorrecta: false, icono: "/icons/" },
+        { texto: "Corazón", esCorrecta: false, },
+        { texto: "Cerebro", esCorrecta: true, },
+        { texto: "Estómago", esCorrecta: false, },
       ],
     },
     {
@@ -278,9 +264,9 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "Me inflo y me desinflo sin parar, gracias a mí puedes saltar, hablar y respirar. ¿Quién soy?",
       respuestas: [
-        { texto: "Pulmones", esCorrecta: true, icono: "/icons/" },
-        { texto: "Hígado", esCorrecta: false, icono: "/icons/" },
-        { texto: "Riñones", esCorrecta: false, icono: "/icons/" },
+        { texto: "Pulmones", esCorrecta: true, },
+        { texto: "Hígado", esCorrecta: false, },
+        { texto: "Riñones", esCorrecta: false, },
       ],
     },
     {
@@ -289,9 +275,9 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "Soy un saco que nunca cocina, pero con jugos y ácidos la comida tritura. ¿Quién soy?",
       respuestas: [
-        { texto: "Estómago", esCorrecta: true, icono: "/icons/" },
-        { texto: "Intestino", esCorrecta: false, icono: "/icons/" },
-        { texto: "Páncreas", esCorrecta: false, icono: "/icons/" },
+        { texto: "Estómago", esCorrecta: true, },
+        { texto: "Intestino", esCorrecta: false, },
+        { texto: "Páncreas", esCorrecta: false, },
       ],
     },
     {
@@ -300,9 +286,9 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "Somos dos y trabajamos en silencio, limpiamos la sangre y expulsamos lo que no tiene uso. ¿Quiénes somos?",
       respuestas: [
-        { texto: "Pulmones", esCorrecta: false, icono: "/icons/" },
-        { texto: "Riñones", esCorrecta: true, icono: "/icons/" },
-        { texto: "Corazón", esCorrecta: false, icono: "/icons/" },
+        { texto: "Pulmones", esCorrecta: false, },
+        { texto: "Riñones", esCorrecta: true, },
+        { texto: "Corazón", esCorrecta: false, },
       ],
     },
     {
@@ -311,9 +297,9 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "Transformo lo que comes, limpio tu sangre y te ayudo a digerir. Sin mí, te costaría mucho vivir. ¿Quién soy?",
       respuestas: [
-        { texto: "Páncreas", esCorrecta: false, icono: "/icons/" },
-        { texto: "Hígado", esCorrecta: true, icono: "/icons/" },
-        { texto: "Estómago", esCorrecta: false, icono: "/icons/" },
+        { texto: "Páncreas", esCorrecta: false, },
+        { texto: "Hígado", esCorrecta: true, },
+        { texto: "Estómago", esCorrecta: false, },
       ],
     },
     {
@@ -322,9 +308,9 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "Soy largo, delgado y estoy en tu barriga. De lo que comes, tomo lo bueno y lo envío a la sangre enseguida. ¿Quién soy?",
       respuestas: [
-        { texto: "Intestino grueso", esCorrecta: false, icono: "/icons/" },
-        { texto: "Intestino delgado", esCorrecta: true, icono: "/icons/" },
-        { texto: "Páncreas", esCorrecta: false, icono: "/icons/" },
+        { texto: "Intestino grueso", esCorrecta: false, },
+        { texto: "Intestino delgado", esCorrecta: true, },
+        { texto: "Páncreas", esCorrecta: false, },
       ],
     },
     {
@@ -333,9 +319,9 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "Gracias a mí puedes brincar, correr y abrazar. Me estiro y me encojo para poder moverte sin parar. ¿Quién soy?",
       respuestas: [
-        { texto: "Músculo", esCorrecta: true, icono: "/icons/" },
-        { texto: "Hueso", esCorrecta: false, icono: "/icons/" },
-        { texto: "Cerebro", esCorrecta: false, icono: "/icons/" },
+        { texto: "Músculo", esCorrecta: true, },
+        { texto: "Hueso", esCorrecta: false, },
+        { texto: "Cerebro", esCorrecta: false, },
       ],
     },
     {
@@ -344,9 +330,9 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "Abro y cierro mis cortinas cada día, y con mi ayuda ves colores, formas y alegría. ¿Quién soy?",
       respuestas: [
-        { texto: "Oído", esCorrecta: false, icono: "/icons/" },
-        { texto: "Ojo", esCorrecta: true, icono: "/icons/" },
-        { texto: "Nariz", esCorrecta: false, icono: "/icons/" },
+        { texto: "Oído", esCorrecta: false, },
+        { texto: "Ojo", esCorrecta: true, },
+        { texto: "Nariz", esCorrecta: false, },
       ],
     },
 
@@ -356,9 +342,9 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "Todos mis lados son iguales, y mis ángulos son perfectos y rectales. ¿Quién soy?",
       respuestas: [
-        { texto: "Cuadrado", esCorrecta: true, icono: "/icons/" },
-        { texto: "Rectángulo", esCorrecta: false, icono: "/icons/" },
-        { texto: "Rombo", esCorrecta: false, icono: "/icons/" },
+        { texto: "Cuadrado", esCorrecta: true, },
+        { texto: "Rectángulo", esCorrecta: false, },
+        { texto: "Rombo", esCorrecta: false, },
       ],
     },
     {
@@ -367,9 +353,9 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "Parezco un cuadrado girado, todos mis lados son iguales, pero mis ángulos algo inclinados. ¿Quién soy?",
       respuestas: [
-        { texto: "Trapecio", esCorrecta: false, icono: "/icons/" },
-        { texto: "Rombo", esCorrecta: true, icono: "/icons/" },
-        { texto: "Hexágono", esCorrecta: false, icono: "/icons/" },
+        { texto: "Trapecio", esCorrecta: false, },
+        { texto: "Rombo", esCorrecta: true, },
+        { texto: "Hexágono", esCorrecta: false, },
       ],
     },
     {
@@ -378,9 +364,9 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "Si dibujas una estrella, seguro me ves, porque soy el polígono con cinco pies. ¿Quién soy?",
       respuestas: [
-        { texto: "Pentágono", esCorrecta: true, icono: "/icons/" },
-        { texto: "Hexágono", esCorrecta: false, icono: "/icons/" },
-        { texto: "Heptágono", esCorrecta: false, icono: "/icons/" },
+        { texto: "Pentágono", esCorrecta: true, },
+        { texto: "Hexágono", esCorrecta: false, },
+        { texto: "Heptágono", esCorrecta: false, },
       ],
     },
     {
@@ -389,9 +375,9 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "Las abejas me usan para construir su hogar, tengo seis lados iguales, ¡me encanta trabajar! ¿Quién soy?",
       respuestas: [
-        { texto: "Hexágono", esCorrecta: true, icono: "/icons/" },
-        { texto: "Octágono", esCorrecta: false, icono: "/icons/" },
-        { texto: "Heptágono", esCorrecta: false, icono: "/icons/" },
+        { texto: "Hexágono", esCorrecta: true, },
+        { texto: "Octágono", esCorrecta: false, },
+        { texto: "Heptágono", esCorrecta: false, },
       ],
     },
     {
@@ -400,9 +386,9 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "Cuando manejas, me ves en la esquina, tengo ocho lados y una forma divina. ¿Quién soy?",
       respuestas: [
-        { texto: "Octágono", esCorrecta: true, icono: "/icons/" },
-        { texto: "Hexágono", esCorrecta: false, icono: "/icons/" },
-        { texto: "Decágono", esCorrecta: false, icono: "/icons/" },
+        { texto: "Octágono", esCorrecta: true, },
+        { texto: "Hexágono", esCorrecta: false, },
+        { texto: "Decágono", esCorrecta: false, },
       ],
     },
     {
@@ -411,9 +397,9 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "No tengo lados ni puntas tampoco, pero si me lanzas, ruedo poco a poco. ¿Quién soy?",
       respuestas: [
-        { texto: "Círculo", esCorrecta: true, icono: "/icons/" },
-        { texto: "Elipse", esCorrecta: false, icono: "/icons/" },
-        { texto: "Óvalo", esCorrecta: false, icono: "/icons/" },
+        { texto: "Círculo", esCorrecta: true, },
+        { texto: "Elipse", esCorrecta: false, },
+        { texto: "Óvalo", esCorrecta: false, },
       ],
     },
     {
@@ -422,9 +408,9 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "Nací del círculo al partirlo en dos, parezco una sonrisa si me ves con atención. ¿Quién soy?",
       respuestas: [
-        { texto: "Trapecio", esCorrecta: false, icono: "/icons/" },
-        { texto: "Triángulo", esCorrecta: false, icono: "/icons/" },
-        { texto: "Semicírculo", esCorrecta: true, icono: "/icons/" },
+        { texto: "Trapecio", esCorrecta: false, },
+        { texto: "Triángulo", esCorrecta: false, },
+        { texto: "Semicírculo", esCorrecta: true, },
       ],
     },
     {
@@ -433,9 +419,9 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "Tengo cuatro lados, pero solo dos son paralelos. Parecen mis techos inclinados, ¡no soy nada feo! ¿Quién soy?",
       respuestas: [
-        { texto: "Romboide", esCorrecta: false, icono: "/icons/" },
-        { texto: "Trapecio", esCorrecta: true, icono: "/icons/" },
-        { texto: "Triángulo", esCorrecta: false, icono: "/icons/" },
+        { texto: "Romboide", esCorrecta: false, },
+        { texto: "Trapecio", esCorrecta: true, },
+        { texto: "Triángulo", esCorrecta: false, },
       ],
     },
   ],
@@ -450,17 +436,14 @@ const diccionarioFlujo: DiccionarioFlujo = {
         {
           texto: "Varicela",
           esCorrecta: false,
-          icono: "/icons/",
         },
         {
           texto: "Triple viral (SRP: Sarampión, Rubéola y Paperas)",
           esCorrecta: true,
-          icono: "/icons/",
         },
         {
           texto: "Rotavirus",
           esCorrecta: false,
-          icono: "/icons/",
         },
       ],
     },
@@ -473,10 +456,9 @@ const diccionarioFlujo: DiccionarioFlujo = {
         {
           texto: "DTP (Difteria, Tétanos y Tos ferina)",
           esCorrecta: true,
-          icono: "/icons/",
         },
-        { texto: "BCG", esCorrecta: false, icono: "/icons/" },
-        { texto: "Hepatitis B", esCorrecta: false, icono: "/icons/" },
+        { texto: "BCG", esCorrecta: false, },
+        { texto: "Hepatitis B", esCorrecta: false, },
       ],
     },
     {
@@ -485,13 +467,12 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "Me gusta esconderme en los nervios y dejarte sin mover, antes muchos niños no podían correr. Pero con una vacuna oral me hicieron desaparecer. ¿Qué vacuna me frena?",
       respuestas: [
-        { texto: "Triple viral", esCorrecta: false, icono: "/icons/" },
+        { texto: "Triple viral", esCorrecta: false, },
         {
           texto: "Polio (Sabin o IPV)",
           esCorrecta: true,
-          icono: "/icons/",
         },
-        { texto: "Rotavirus", esCorrecta: false, icono: "/icons/" },
+        { texto: "Rotavirus", esCorrecta: false, },
       ],
     },
     {
@@ -500,13 +481,12 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "Si te cortas y no estás protegido, te dejo tieso y adolorido. Por suerte, hay una vacuna que evita el peligro. ¿Qué vacuna me detiene?",
       respuestas: [
-        { texto: "Hepatitis A", esCorrecta: false, icono: "/icons/" },
+        { texto: "Hepatitis A", esCorrecta: false, },
         {
           texto: "DTP (Difteria, Tétanos y Tos ferina)",
           esCorrecta: true,
-          icono: "/icons/",
         },
-        { texto: "BCG", esCorrecta: false, icono: "/icons/" },
+        { texto: "BCG", esCorrecta: false, },
       ],
     },
     {
@@ -515,9 +495,9 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "Me escondo en el agua y la comida contaminada, y dejo tu piel amarilla y cansada. Con una vacuna sencilla quedo derrotada. ¿Qué vacuna me frena?",
       respuestas: [
-        { texto: "Neumocócica", esCorrecta: false, icono: "/icons/" },
-        { texto: "Hepatitis A", esCorrecta: true, icono: "/icons/" },
-        { texto: "Hepatitis B", esCorrecta: false, icono: "/icons/" },
+        { texto: "Neumocócica", esCorrecta: false, },
+        { texto: "Hepatitis A", esCorrecta: true, },
+        { texto: "Hepatitis B", esCorrecta: false, },
       ],
     },
     {
@@ -526,9 +506,9 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "Me encanta inflar tu cara y causar fiebre, antes era común entre niños y mujeres. Una vacuna triple me deja sin poderes. ¿Qué vacuna me vence?",
       respuestas: [
-        { texto: "Triple viral (SRP)", esCorrecta: true, icono: "/icons/" },
-        { texto: "Hepatitis A", esCorrecta: false, icono: "/icons/" },
-        { texto: "DTP", esCorrecta: false, icono: "/icons/" },
+        { texto: "Triple viral (SRP)", esCorrecta: true, },
+        { texto: "Hepatitis A", esCorrecta: false, },
+        { texto: "DTP", esCorrecta: false, },
       ],
     },
     {
@@ -537,9 +517,9 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "Provoco diarrea y vómito sin parar, especialmente en bebés al empezar. Con unas gotitas en la boca me puedes derrotar. ¿Qué vacuna me detiene?",
       respuestas: [
-        { texto: "Neumocócica", esCorrecta: false, icono: "/icons/" },
-        { texto: "Rotavirus", esCorrecta: true, icono: "/icons/" },
-        { texto: "Hepatitis A", esCorrecta: false, icono: "/icons/" },
+        { texto: "Neumocócica", esCorrecta: false, },
+        { texto: "Rotavirus", esCorrecta: true, },
+        { texto: "Hepatitis A", esCorrecta: false, },
       ],
     },
     {
@@ -548,9 +528,9 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "Entro por el aire y ataco los pulmones, dejo tos y cansancio por montones. Una vacuna deja marca en el brazo, y me detiene con gran abrazo. ¿Qué vacuna me vence?",
       respuestas: [
-        { texto: "BCG", esCorrecta: true, icono: "/icons/" },
-        { texto: "DTP", esCorrecta: false, icono: "/icons/" },
-        { texto: "Influenza", esCorrecta: false, icono: "/icons/" },
+        { texto: "BCG", esCorrecta: true, },
+        { texto: "DTP", esCorrecta: false, },
+        { texto: "Influenza", esCorrecta: false, },
       ],
     },
     {
@@ -559,9 +539,9 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "Cada año cambio de disfraz, te hago estornudar y moquear sin paz. Una vacuna anual me pone un alto eficaz. ¿Qué vacuna me detiene?",
       respuestas: [
-        { texto: "Influenza", esCorrecta: true, icono: "/icons/" },
-        { texto: "COVID-19", esCorrecta: false, icono: "/icons/" },
-        { texto: "Neumocócica", esCorrecta: false, icono: "/icons/" },
+        { texto: "Influenza", esCorrecta: true, },
+        { texto: "COVID-19", esCorrecta: false, },
+        { texto: "Neumocócica", esCorrecta: false, },
       ],
     },
     {
@@ -570,9 +550,9 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "Dejo granitos que dan picazón, y aunque soy leve, provoco irritación. Una vacuna evita mi invasión. ¿Qué vacuna me frena?",
       respuestas: [
-        { texto: "Rotavirus", esCorrecta: false, icono: "/icons/" },
-        { texto: "Varicela", esCorrecta: true, icono: "/icons/" },
-        { texto: "Triple viral", esCorrecta: false, icono: "/icons/" },
+        { texto: "Rotavirus", esCorrecta: false, },
+        { texto: "Varicela", esCorrecta: true, },
+        { texto: "Triple viral", esCorrecta: false, },
       ],
     },
     {
@@ -581,9 +561,9 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "Tengo 6 caras rectangulares y todas se enfrentan con orden, guardo cosas, soy práctico y me encuentras en cualquier rincón. ¿Quién soy?",
       respuestas: [
-        { texto: "Cubo", esCorrecta: false, icono: "/icons/" },
-        { texto: "Prisma rectangular", esCorrecta: true, icono: "/icons/" },
-        { texto: "Pirámide", esCorrecta: false, icono: "/icons/" },
+        { texto: "Cubo", esCorrecta: false, },
+        { texto: "Prisma rectangular", esCorrecta: true, },
+        { texto: "Pirámide", esCorrecta: false, },
       ],
     },
     {
@@ -592,9 +572,9 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "Tengo 6 caras cuadradas, 8 vértices y 12 aristas bien contadas. Me usan en los juegos y también en matemáticas.",
       respuestas: [
-        { texto: "Esfera", esCorrecta: false, icono: "/icons/" },
-        { texto: "Cilindro", esCorrecta: false, icono: "/icons/" },
-        { texto: "Cubo", esCorrecta: true, icono: "/icons/" },
+        { texto: "Esfera", esCorrecta: false, },
+        { texto: "Cilindro", esCorrecta: false, },
+        { texto: "Cubo", esCorrecta: true, },
       ],
     },
     {
@@ -603,9 +583,9 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "Tengo dos bases iguales y paralelas, mis caras laterales son rectángulos. Puedo ser triangular, cuadrangular o hexagonal.",
       respuestas: [
-        { texto: "Prisma", esCorrecta: true, icono: "/icons/" },
-        { texto: "Pirámide", esCorrecta: false, icono: "/icons/" },
-        { texto: "Cono", esCorrecta: false, icono: "/icons/" },
+        { texto: "Prisma", esCorrecta: true, },
+        { texto: "Pirámide", esCorrecta: false, },
+        { texto: "Cono", esCorrecta: false, },
       ],
     },
     {
@@ -614,9 +594,9 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "Tengo una base que puede ser cuadrada o triangular, y todas mis caras laterales se encuentran en un punto al brillar.",
       respuestas: [
-        { texto: "Cilindro", esCorrecta: false, icono: "/icons/" },
-        { texto: "Pirámide", esCorrecta: true, icono: "/icons/" },
-        { texto: "Prisma", esCorrecta: false, icono: "/icons/" },
+        { texto: "Cilindro", esCorrecta: false, },
+        { texto: "Pirámide", esCorrecta: true, },
+        { texto: "Prisma", esCorrecta: false, },
       ],
     },
     {
@@ -625,9 +605,9 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "No tengo vértices ni caras planas, ruedo sin parar y soy totalmente suave. ¿Quién soy?",
       respuestas: [
-        { texto: "Esfera", esCorrecta: true, icono: "/icons/" },
-        { texto: "Cono", esCorrecta: false, icono: "/icons/" },
-        { texto: "Cilindro", esCorrecta: false, icono: "/icons/" },
+        { texto: "Esfera", esCorrecta: true, },
+        { texto: "Cono", esCorrecta: false, },
+        { texto: "Cilindro", esCorrecta: false, },
       ],
     },
     {
@@ -636,9 +616,9 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "Tengo dos círculos arriba y abajo, y un cuerpo recto que parece un tubo. Sirvo para guardar agua o lápices, según tu gusto.",
       respuestas: [
-        { texto: "Cono", esCorrecta: false, icono: "/icons/" },
-        { texto: "Cilindro", esCorrecta: true, icono: "/icons/" },
-        { texto: "Prisma", esCorrecta: false, icono: "/icons/" },
+        { texto: "Cono", esCorrecta: false, },
+        { texto: "Cilindro", esCorrecta: true, },
+        { texto: "Prisma", esCorrecta: false, },
       ],
     },
     {
@@ -647,9 +627,9 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "Tengo una base redonda y un solo vértice arriba, si me giras parezco un helado o una colina.",
       respuestas: [
-        { texto: "Cono", esCorrecta: true, icono: "/icons/" },
-        { texto: "Esfera", esCorrecta: false, icono: "/icons/" },
-        { texto: "Pirámide", esCorrecta: false, icono: "/icons/" },
+        { texto: "Cono", esCorrecta: true, },
+        { texto: "Esfera", esCorrecta: false,},
+        { texto: "Pirámide", esCorrecta: false, },
       ],
     },
     {
@@ -658,9 +638,9 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "Tengo 4 caras, todas son triángulos iguales, no tengo base diferente ni lados desiguales.",
       respuestas: [
-        { texto: "Tetraedro", esCorrecta: true, icono: "/icons/" },
-        { texto: "Octaedro", esCorrecta: false, icono: "/icons/" },
-        { texto: "Prisma triangular", esCorrecta: false, icono: "/icons/" },
+        { texto: "Tetraedro", esCorrecta: true, },
+        { texto: "Octaedro", esCorrecta: false, },
+        { texto: "Prisma triangular", esCorrecta: false, },
       ],
     },
     {
@@ -669,9 +649,9 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "Parezco dos pirámides pegadas por la base, mis 8 caras son triángulos, ¡qué elegancia y clase!",
       respuestas: [
-        { texto: "Octaedro", esCorrecta: true, icono: "/icons/" },
-        { texto: "Dodecaedro", esCorrecta: false, icono: "/icons/" },
-        { texto: "Prisma hexagonal", esCorrecta: false, icono: "/icons/" },
+        { texto: "Octaedro", esCorrecta: true, },
+        { texto: "Dodecaedro", esCorrecta: false, },
+        { texto: "Prisma hexagonal", esCorrecta: false, },
       ],
     },
     {
@@ -680,9 +660,9 @@ const diccionarioFlujo: DiccionarioFlujo = {
       acertijo:
         "Mis caras son pentágonos perfectos, y aunque soy difícil de dibujar, ¡soy muy geométrico y correcto!",
       respuestas: [
-        { texto: "Dodecaedro", esCorrecta: true, icono: "/icons/" },
-        { texto: "Icosaedro", esCorrecta: false, icono: "/icons/" },
-        { texto: "Cubo", esCorrecta: false, icono: "/icons/" },
+        { texto: "Dodecaedro", esCorrecta: true, },
+        { texto: "Icosaedro", esCorrecta: false, },
+        { texto: "Cubo", esCorrecta: false, },
       ],
     },
   ],
@@ -728,6 +708,18 @@ const categoriaDesdeId = (id: ProblematicaFlujoId): string => {
   return "General";
 };
 
+const formatPlataforma = (texto: string): string => {
+  const mapa: Record<string, string> = {
+    android: "Android",
+    ios: "iOS",
+    web: "Web",
+  };
+  return texto
+    .split(/,\s*/)
+    .map((p) => mapa[p.toLowerCase()] ?? p.charAt(0).toUpperCase() + p.slice(1))
+    .join(", ");
+};
+
 const shuffleArray = <T,>(arr: T[]): T[] => {
   // Crea una copia para no modificar el arreglo original del escenario
   const copy = [...arr];
@@ -741,20 +733,22 @@ const shuffleArray = <T,>(arr: T[]): T[] => {
   return copy;
 };
 
-const transformarAcertijosJSON = (acertijosJSON: AcertijoJSON[]): EscenarioFlujo[] => {
+const transformarAcertijosJSON = (
+  acertijosJSON: AcertijoJSON[],
+): EscenarioFlujo[] => {
   return acertijosJSON.map((acertijo) => {
     // Convertir las opciones en RespuestaOpcion[]
     const respuestas: RespuestaOpcion[] = acertijo.opciones.map((opcion) => ({
       texto: opcion,
       esCorrecta: opcion === acertijo.respuesta,
-      icono: "/icons/"
+      icono: "/icons/",
     }));
 
     return {
       id: acertijo.id as ProblematicaFlujoId,
       titulo: acertijo.tema,
       acertijo: acertijo.pregunta,
-      respuestas
+      respuestas,
     };
   });
 };
@@ -815,14 +809,18 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
   const [appFecha, setAppFecha] = useState("16 de Noviembre del 2025");
   const [appPlataformas, setAppPlataformas] = useState("Android, iOS y Web");
   const [appDescripcion, setAppDescripcion] = useState(
-    "Lee el acertijo y selecciona la respuesta correcta antes de que termine el tiempo."
+    "Lee el acertijo y selecciona la respuesta correcta antes de que termine el tiempo.",
   );
   const [configNivel, setConfigNivel] = useState<string | null>(null);
   const [configProblematicas, setConfigProblematicas] = useState<
     ProblematicaFlujoId[] | null
   >(null);
-  const [configAcertijos, setConfigAcertijos] = useState<EscenarioFlujo[] | null>(null);
-  const [configTiempoLimite, setConfigTiempoLimite] = useState<number | null>(null);
+  const [configAcertijos, setConfigAcertijos] = useState<
+    EscenarioFlujo[] | null
+  >(null);
+  const [configTiempoLimite, setConfigTiempoLimite] = useState<number | null>(
+    null,
+  );
   const [configCategoria, setConfigCategoria] = useState<string | null>(null);
 
   // Pantalla de inicio + modal de información (estilo Play)
@@ -831,13 +829,12 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
 
   // Overlay de cuenta regresiva (3..2..1..¡Ahora!)
   const [showCountdown, setShowCountdown] = useState(false);
-  const [countdown, setCountdown] = useState(3);
+  const [countdown, setCountdown] = useState(5);
 
   // Pausa (modal tipo Play)
   const [pausado, setPausado] = useState(false);
   const [showPauseAlert, setShowPauseAlert] = useState(false);
 
-  // Instrucciones
   const [showInstructions, setShowInstructions] = useState<boolean>(false);
 
   const [indiceJuegoActual, setIndiceJuegoActual] = useState(0);
@@ -901,7 +898,9 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
         if (data.tiempoLimite) setConfigTiempoLimite(data.tiempoLimite);
         if (data.categoria) setConfigCategoria(data.categoria);
         if (data.acertijos && data.acertijos.length > 0) {
-          const acertijosTransformados = transformarAcertijosJSON(data.acertijos);
+          const acertijosTransformados = transformarAcertijosJSON(
+            data.acertijos,
+          );
           setConfigAcertijos(acertijosTransformados);
         }
       } catch (err) {
@@ -931,15 +930,21 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
     }
 
     // Si hay problemáticas configuradas (del JSON o del prop)
-    const problematicasAUsar = configProblematicas !== null ? configProblematicas : problematicas;
+    const problematicasAUsar =
+      configProblematicas !== null ? configProblematicas : problematicas;
     if (problematicasAUsar && problematicasAUsar.length > 0) {
       return problematicasAUsar
-        .map((id) => escenariosNivelBase.find((escenario) => escenario.id === id))
+        .map((id) =>
+          escenariosNivelBase.find((escenario) => escenario.id === id),
+        )
         .filter((escenario): escenario is EscenarioFlujo => !!escenario);
     }
 
     // Por defecto, usar los primeros del nivel
-    return escenariosNivelBase.slice(0, configuracionNiveles[nivelConfigKey].numeroJuegos);
+    return escenariosNivelBase.slice(
+      0,
+      configuracionNiveles[nivelConfigKey].numeroJuegos,
+    );
   })();
 
   const totalJuegos = escenariosSeleccionados.length || 1;
@@ -973,24 +978,6 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
 
     return `${Number(day)} de ${meses[mesIndex]} del ${year}`;
   };
-
-  // Categoría: usa la del JSON si está disponible, si no la infiere de los IDs
-  const categoriaConfig = (() => {
-    // Si el JSON tiene categoría configurada, usarla
-    if (configCategoria !== null) {
-      return configCategoria;
-    }
-
-    // Si no, inferirla de los IDs de los escenarios seleccionados
-    const categorias = new Set(
-      (escenariosSeleccionados.length
-        ? escenariosSeleccionados
-        : [escenarioActual]
-      ).map((e) => categoriaDesdeId(e.id))
-    );
-    if (categorias.size === 1) return Array.from(categorias)[0];
-    return "Mixta";
-  })();
 
   const [respuestasOrdenadas, setRespuestasOrdenadas] = useState<
     RespuestaOpcion[]
@@ -1060,7 +1047,10 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
 
     setIndiceJuegoActual((prev) => prev + 1);
     // Usa tiempo del JSON (en segundos) si está disponible, si no el del config (en minutos)
-    const tiempoPorJuego = configTiempoLimite !== null ? configTiempoLimite : config.tiempoPorJuego * 60;
+    const tiempoPorJuego =
+      configTiempoLimite !== null
+        ? configTiempoLimite
+        : config.tiempoPorJuego * 60;
     setTiempoRestante(tiempoPorJuego);
   };
 
@@ -1148,7 +1138,7 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
   useEffect(() => {
     if (!showCountdown) return;
 
-    setCountdown(3);
+    setCountdown(5);
 
     const intervalId = window.setInterval(() => {
       setCountdown((prev) => {
@@ -1169,7 +1159,7 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
     if (countdown === 0) {
       const t = window.setTimeout(() => {
         setShowCountdown(false);
-        setCountdown(3);
+        setCountdown(5);
       }, 700);
 
       return () => window.clearTimeout(t);
@@ -1196,7 +1186,10 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
     setIndiceJuegoActual(0);
 
     // Usa tiempo del JSON (en segundos) si está disponible, si no el del config (en minutos)
-    const tiempoPorJuego = configTiempoLimite !== null ? configTiempoLimite : config.tiempoPorJuego * 60;
+    const tiempoPorJuego =
+      configTiempoLimite !== null
+        ? configTiempoLimite
+        : config.tiempoPorJuego * 60;
     setTiempoRestante(tiempoPorJuego);
     setPuntuacionTotal(0);
     setJuegosCompletados(0);
@@ -1208,7 +1201,7 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
 
     // Al reiniciar, también aleatorizamos las respuestas del primer acertijo
     setRespuestasOrdenadas(
-      shuffleArray((escenariosSeleccionados[0] || escenarioActual).respuestas)
+      shuffleArray((escenariosSeleccionados[0] || escenarioActual).respuestas),
     );
 
     setShowInstructions(false);
@@ -1271,8 +1264,6 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
   };
 
   const handleReanudar = () => {
-    setCountdown(3);
-    setShowCountdown(true);
     setShowPauseAlert(false);
     setPausado(false);
   };
@@ -1305,11 +1296,9 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
 
   return (
     <IonPage>
-      {showCountdown && (
+      {showCountdown && countdown > 0 && (
         <div className="countdown-overlay">
-          <div className="countdown-number">
-            {countdown > 0 ? countdown : "¡Ahora!"}
-          </div>
+          <div className="countdown-number">{countdown}</div>
         </div>
       )}
 
@@ -1383,17 +1372,12 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
 
               <div className="card">
                 <p className="title">PLATAFORMAS</p>
-                <p className="data">{appPlataformas}</p>
+                <p className="data">{formatPlataforma(appPlataformas)}</p>
               </div>
 
               <div className="card">
-                <p className="title">NIVEL</p>
-                <p className="data">{obtenerNombreNivel(nivelConfigKey)}</p>
-              </div>
-
-              <div className="card">
-                <p className="title">CATEGORÍA</p>
-                <p className="data">{categoriaConfig}</p>
+                <p className="title">NÚMERO DE ACERTIJOS</p>
+                <p className="data">{escenariosSeleccionados.length}</p>
               </div>
 
               <div className="card description">
@@ -1488,8 +1472,7 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
                 </div>
 
                 <span>
-                  <strong>Autor:</strong> {appAutor} | <strong>Versión:</strong>{" "}
-                  {appVersion}
+                  <strong>{appName}</strong>
                 </span>
               </div>
             </div>
@@ -1499,7 +1482,7 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
                 className="ion-text-center instructions"
                 onClick={() => setShowInstructions(true)}
               >
-                Instrucciones
+                Reglas Básicas
               </IonTitle>
 
               <div className="info">
@@ -1542,8 +1525,8 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
                       esSeleccionada && ultimaRespuestaCorrecta === true
                         ? " respuesta-card-correcta"
                         : esSeleccionada && ultimaRespuestaCorrecta === false
-                        ? " respuesta-card-incorrecta"
-                        : "";
+                          ? " respuesta-card-incorrecta"
+                          : "";
 
                     return (
                       <IonCard
@@ -1559,7 +1542,7 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
                           <h3>{respuesta.texto}</h3>
                         </div>
                         <div className="respuesta-card-content">
-                          <img src={respuesta.icono} alt={respuesta.texto} />
+                          <IonIcon style={{width:"50px", height:"50px", color: "var(--color-primary)"}} icon={helpCircleOutline} />
                         </div>
                       </IonCard>
                     );
@@ -1683,8 +1666,8 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
                         {juegosCompletados === totalJuegos
                           ? "¡PERFECTO! 🏆"
                           : juegosCompletados > juegosFallados
-                          ? "¡Buen trabajo! 👍"
-                          : "¡Sigue intentando! 💪"}
+                            ? "¡Buen trabajo! 👍"
+                            : "¡Sigue intentando! 💪"}
                       </IonBadge>
                     </div>
 
@@ -1741,7 +1724,7 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
                           color: "var(--color-primary)",
                         }}
                       >
-                        Instrucciones
+                        Reglas Básicas
                       </h2>
                       <IonIcon
                         icon={closeCircleOutline}
