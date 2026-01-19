@@ -947,10 +947,21 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
     );
   })();
 
-  const totalJuegos = escenariosSeleccionados.length || 1;
+  // Estado para los acertijos en orden aleatorio
+  const [acertijosAleatorios, setAcertijosAleatorios] = useState<EscenarioFlujo[]>([]);
+
+  // Inicializar acertijos aleatorios cuando se cargan los escenarios
+  useEffect(() => {
+    if (escenariosSeleccionados.length > 0 && acertijosAleatorios.length === 0) {
+      setAcertijosAleatorios(shuffleArray(escenariosSeleccionados));
+    }
+  }, [escenariosSeleccionados]);
+
+  const totalJuegos = acertijosAleatorios.length || escenariosSeleccionados.length || 1;
 
   const escenarioActual: EscenarioFlujo =
-    escenariosSeleccionados[indiceJuegoActual] ||
+    acertijosAleatorios[indiceJuegoActual] ||
+    acertijosAleatorios[0] ||
     escenariosSeleccionados[0] ||
     escenariosNivelBase[0];
 
@@ -1199,9 +1210,13 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
     setRespuestaSeleccionada(null);
     setUltimaRespuestaCorrecta(null);
 
-    // Al reiniciar, también aleatorizamos las respuestas del primer acertijo
+    // Al reiniciar, aleatorizamos el orden de los acertijos
+    const nuevosAcertijosAleatorios = shuffleArray(escenariosSeleccionados);
+    setAcertijosAleatorios(nuevosAcertijosAleatorios);
+
+    // También aleatorizamos las respuestas del primer acertijo
     setRespuestasOrdenadas(
-      shuffleArray((escenariosSeleccionados[0] || escenarioActual).respuestas),
+      shuffleArray(nuevosAcertijosAleatorios[0]?.respuestas || []),
     );
 
     setShowInstructions(false);
