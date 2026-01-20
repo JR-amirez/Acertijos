@@ -844,9 +844,9 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
   const nivelConfigKey = normalizarNivelConfig(nivelAUsar);
   const config = configuracionNiveles[nivelConfigKey];
 
-  const [tiempoRestante, setTiempoRestante] = useState(() => {
-    return config.tiempoPorJuego * 60;
-  });
+  // 60 segundos (1 minuto) por cada acertijo
+  const TIEMPO_POR_ACERTIJO = 60;
+  const [tiempoRestante, setTiempoRestante] = useState(TIEMPO_POR_ACERTIJO);
   const [puntuacionTotal, setPuntuacionTotal] = useState(0);
   const [juegoTerminado, setJuegoTerminado] = useState(false);
   const [juegosCompletados, setJuegosCompletados] = useState(0);
@@ -913,12 +913,12 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
     cargarConfig();
   }, []);
 
-  // Actualiza el tiempo inicial cuando se carga el tiempo límite del JSON (viene en segundos)
+  // Reinicia el tiempo cuando vuelve a la pantalla de inicio
   useEffect(() => {
-    if (configTiempoLimite !== null && mostrarPantallaInicio) {
-      setTiempoRestante(configTiempoLimite);
+    if (mostrarPantallaInicio) {
+      setTiempoRestante(TIEMPO_POR_ACERTIJO);
     }
-  }, [configTiempoLimite, mostrarPantallaInicio]);
+  }, [mostrarPantallaInicio]);
 
   const escenariosNivelBase = diccionarioFlujo[nivelConfigKey];
 
@@ -1057,12 +1057,7 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
     }
 
     setIndiceJuegoActual((prev) => prev + 1);
-    // Usa tiempo del JSON (en segundos) si está disponible, si no el del config (en minutos)
-    const tiempoPorJuego =
-      configTiempoLimite !== null
-        ? configTiempoLimite
-        : config.tiempoPorJuego * 60;
-    setTiempoRestante(tiempoPorJuego);
+    setTiempoRestante(TIEMPO_POR_ACERTIJO);
   };
 
   const handleCerrarOverlayFinJuego = () => {
@@ -1195,13 +1190,7 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
     });
 
     setIndiceJuegoActual(0);
-
-    // Usa tiempo del JSON (en segundos) si está disponible, si no el del config (en minutos)
-    const tiempoPorJuego =
-      configTiempoLimite !== null
-        ? configTiempoLimite
-        : config.tiempoPorJuego * 60;
-    setTiempoRestante(tiempoPorJuego);
+    setTiempoRestante(TIEMPO_POR_ACERTIJO);
     setPuntuacionTotal(0);
     setJuegosCompletados(0);
     setJuegosFallados(0);
