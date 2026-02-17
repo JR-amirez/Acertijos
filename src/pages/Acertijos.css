@@ -76,8 +76,11 @@
 
 .juego-container {
     width: 100%;
-    height: 82%;
-    padding: 0 16px 16px 16px;
+    height: 70%;
+    padding: 16px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
 }
 
 .instructions {
@@ -87,43 +90,49 @@
     height: 4%;
 }
 
-.info {
-    display: flex;
+.instructions-exercises {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: auto auto;
     justify-content: space-between;
     align-items: center;
-    height: 7%;
+    height: 8%;
 }
 
-.info .num-words {
+.instructions-exercises .num-words {
     text-align: center;
     font-weight: bold;
 }
 
-.info .temporizador {
+.instructions-exercises .rules {
+    text-align: center;
+    font-weight: bold;
+    color: #000;
+    font-weight: bold;
+    animation: pulse 2s ease infinite;
+    grid-column: 1 / -1;
+}
+
+.instructions-exercises .temporizador {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
 }
 
-.info .temporizador .icono-tiempo {
+.instructions-exercises .temporizador .icono-tiempo {
     font-size: 22px;
     color: var(--dark);
 }
 
-.info .temporizador .tiempo-display {
+.instructions-exercises .temporizador .tiempo-display {
     margin: 0;
     font-size: 16px;
     font-weight: bold;
     color: var(--dark);
-    font-family: 'Courier New', monospace;
+    font-family: "Courier New", monospace;
 }
 
-.info .tiempo-critico {
-    animation: parpadeo 1s infinite;
-}
-
-.tiempo-critico .icono-tiempo,
 .tiempo-critico .tiempo-display {
     color: var(--ion-color-danger) !important;
 }
@@ -204,7 +213,6 @@
 }
 
 .respuestas-container {
-    margin-top: 12px;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -781,4 +789,21 @@ ion-icon{
     padding: 11px 20px;
     margin: 20px 0;
     --background: var(--color-primary);
+}
+
+.button.game {
+    padding: 5px 0;
+    height: 7%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin: 0;
+}
+
+.button.game ion-button {
+    margin: 0 !important;
+    --padding-top: 10px;
+    --padding-bottom: 10px;
+    animation: none;
 }
