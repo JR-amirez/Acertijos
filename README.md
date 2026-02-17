@@ -112,11 +112,9 @@ La forma recomendada de seleccionar acertijos es mediante el campo `problematica
 {
   "nivel": "avanzado",
   "problematicas": [
-    "avanzado_vac_1",
-    "avanzado_vac_5",
-    "avanzado_vac_6",
-    "avanzado_vac_3",
-    "avanzado_geo3d_1"
+    "fotosintesis",
+    "fototropismo",
+    "autotrofos"
   ],
   "nombreApp": "Acertijos",
   "version": "12",
