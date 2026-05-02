@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
-  appName: 'AcertijosMv',
+  appId: 'io.acertijos.steam',
+  appName: 'Acertijos',
   webDir: 'dist'
 };
 
