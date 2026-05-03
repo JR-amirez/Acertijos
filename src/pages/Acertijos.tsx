@@ -692,7 +692,6 @@ type AcertijosRuntimeConfig = {
   nombreApp?: string;
   plataformas?: string[];
   nivel?: string;
-  tiempoLimite?: number;
   categoria?: string;
   acertijos?: AcertijoJSON[];
   problematicas?: ProblematicaFlujoId[];
@@ -754,17 +753,17 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
     basico: {
       numeroJuegos: 3,
       puntosPorJuego: 10,
-      tiempoPorJuego: 1,
+      tiempoPorJuego: 300,
     },
     intermedio: {
       numeroJuegos: 5,
       puntosPorJuego: 15,
-      tiempoPorJuego: 1.4,
+      tiempoPorJuego: 600,
     },
     avanzado: {
       numeroJuegos: 7,
       puntosPorJuego: 20,
-      tiempoPorJuego: 2.2,
+      tiempoPorJuego: 900,
     },
   };
 
@@ -804,9 +803,6 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
   const [configAcertijos, setConfigAcertijos] = useState<
     EscenarioFlujo[] | null
   >(null);
-  const [configTiempoLimite, setConfigTiempoLimite] = useState<number | null>(
-    null,
-  );
   const [configCategoria, setConfigCategoria] = useState<string | null>(null);
   const [mostrarPantallaInicio, setMostrarPantallaInicio] = useState(true);
   const [showInformation, setShowInformation] = useState(false);
@@ -819,7 +815,7 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
   const nivelAUsar = configNivel !== null ? configNivel : nivel;
   const nivelConfigKey = normalizarNivelConfig(nivelAUsar);
   const config = configuracionNiveles[nivelConfigKey];
-  const TIEMPO_POR_ACERTIJO = 60;
+  const TIEMPO_POR_ACERTIJO = config.tiempoPorJuego;
   const [tiempoRestante, setTiempoRestante] = useState(TIEMPO_POR_ACERTIJO);
   const [puntuacionTotal, setPuntuacionTotal] = useState(0);
   const [juegoTerminado, setJuegoTerminado] = useState(false);
@@ -864,7 +860,6 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
         if (data.plataformas) setAppPlataformas(data.plataformas.join(", "));
         if (data.nivel) setConfigNivel(data.nivel);
         if (data.problematicas) setConfigProblematicas(data.problematicas);
-        if (data.tiempoLimite) setConfigTiempoLimite(data.tiempoLimite);
         if (data.categoria) setConfigCategoria(data.categoria);
         if (data.acertijos && data.acertijos.length > 0) {
           const acertijosTransformados = transformarAcertijosJSON(
@@ -886,7 +881,7 @@ const Acertijos: React.FC<OrdenamientoProps> = ({
     if (mostrarPantallaInicio) {
       setTiempoRestante(TIEMPO_POR_ACERTIJO);
     }
-  }, [mostrarPantallaInicio]);
+  }, [mostrarPantallaInicio, TIEMPO_POR_ACERTIJO]);
 
   const escenariosNivelBase = diccionarioFlujo[nivelConfigKey];
 
